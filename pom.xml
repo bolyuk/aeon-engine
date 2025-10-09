@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>bl0.game</groupId>
+    <artifactId>aeon-eng</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>24</maven.compiler.release>
+        <lwjgl.version>3.3.6</lwjgl.version>
+        <lwjgl.natives>natives-linux</lwjgl.natives>
+        <main.class>org.bl0.aeon.test.game.Main</main.class>
+    </properties>
+
+    <!-- ВАЖНО: BOM импортируется тут -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-bom</artifactId>
+                <version>${lwjgl.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- LWJGL: core + natives -->
+        <dependency>
+            <groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
+            <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
+        </dependency>
+
+        <!-- GLFW + natives -->
+        <dependency>
+            <groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
+            <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
+        </dependency>
+
+        <!-- OpenGL (Java binding; нативок у opengl-модуля нет, но оставим симметрию) -->
+        <dependency>
+            <groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
+            <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
+        </dependency>
+
+        <!-- Остальные зависимости -->
+        <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>1.10.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Компилятор с превью -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Проброс превью в тесты (если есть) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Удобный запуск через mvn exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <mainClass>${main.class}</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    <arguments></arguments>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>org.lwjgl.util.Debug</key>
+                            <value>true</value>
+                        </systemProperty>
+                    </systemProperties>
+                    <commandlineArgs></commandlineArgs>
+                    <includeProjectDependencies>true</includeProjectDependencies>
+                    <includePluginDependencies>false</includePluginDependencies>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <executableDependency></executableDependency>
+                    <longModulepath>false</longModulepath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals><goal>java</goal></goals>
+                        <configuration>
+                            <arguments></arguments>
+                            <systemProperties>
+                                <!-- JDK 24 предупреждения о native-access -->
+                                <systemProperty>
+                                    <key>jdk.module.illegalAccess.silent</key>
+                                    <value>true</value>
+                                </systemProperty>
+                            </systemProperties>
+                            <commandlineArgs></commandlineArgs>
+                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                            <classpathScope>runtime</classpathScope>
+                            <includeProjectDependencies>true</includeProjectDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
