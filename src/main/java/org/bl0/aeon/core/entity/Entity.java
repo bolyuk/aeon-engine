@@ -5,7 +5,7 @@ package org.bl0.aeon.core.entity;
 
 import java.util.UUID;
 import org.bl0.aeon.engine.context.DrawContext;
-import org.bl0.aeon.engine.context.SceneContext;
+import org.bl0.aeon.engine.context.ISceneContext;
 import org.bl0.aeon.core.graphic.shaders.ShaderProgram;
 import org.bl0.aeon.engine.interfaces.IDisposable;
 import org.bl0.aeon.engine.interfaces.IUniformsSetter;
@@ -20,7 +20,7 @@ IDrawable,
 IBindable,
 IUniformsSetter {
     public final UUID uuid = UUID.randomUUID();
-    public SceneContext sceneContext;
+    public ISceneContext sceneContext;
 
     public Entity() {
         this.bindEntity(this);

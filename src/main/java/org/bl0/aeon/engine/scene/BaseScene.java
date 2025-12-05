@@ -8,7 +8,7 @@ import org.bl0.aeon.core.components.Camera;
 import org.bl0.aeon.core.components.data.res.Material;
 import org.bl0.aeon.engine.context.DrawContext;
 import org.bl0.aeon.engine.context.GameContext;
-import org.bl0.aeon.engine.context.SceneContext;
+import org.bl0.aeon.engine.context.ISceneContext;
 import org.bl0.aeon.core.entity.Entity;
 import org.bl0.aeon.core.graphic.shaders.ShaderProgram;
 import org.bl0.aeon.engine.interfaces.IDisposable;
@@ -16,16 +16,10 @@ import org.bl0.aeon.engine.interfaces.bind.IBindWData;
 import org.bl0.aeon.engine.interfaces.component.IComponent;
 import org.bl0.aeon.core.systems.LightSystem;
 
-public abstract class AbstractScene
-extends SceneContext
-implements IDisposable,
-IBindWData<GameContext> {
-    ArrayList<Entity> entities = new ArrayList();
+public abstract class BaseScene
+implements IScene, ISceneContext {
+    protected ArrayList<Entity> entities = new ArrayList();
     public Camera camera = new Camera();
-
-    public abstract void OnBeforeRender(DrawContext var1, GameContext var2);
-
-    public abstract void OnBeforeUpdate(GameContext var1);
 
     @Override
     public void add(Entity entity) {
@@ -54,7 +48,7 @@ IBindWData<GameContext> {
             e.bind();
             e.setUniforms(s);
             LightSystem.prepareUniformsFor(e, s, this.entities);
-            gameCtx.scene.camera.setUniforms(s);
+            gameCtx.scene.getCamera().setUniforms(s);
             e.draw(drawCtx);
             e.unbind();
         }

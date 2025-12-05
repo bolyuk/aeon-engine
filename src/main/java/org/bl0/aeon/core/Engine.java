@@ -5,11 +5,11 @@ package org.bl0.aeon.core;
 
 import org.bl0.aeon.engine.context.DrawContext;
 import org.bl0.aeon.engine.context.GameContext;
-import org.bl0.aeon.engine.scene.AbstractScene;
 import org.bl0.aeon.core.graphic.Window;
 import org.bl0.aeon.engine.interfaces.input.AbstractInputManager;
 import org.bl0.aeon.engine.interfaces.IDisposable;
 import org.bl0.aeon.engine.interfaces.init.BaseInitializable;
+import org.bl0.aeon.engine.scene.IScene;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -47,7 +47,7 @@ implements IDisposable {
             GL11.glViewport(0, 0, w, h);
             context.window.width = w;
             context.window.height = h;
-            context.scene.camera.aspectRatio.set(Float.valueOf((float)w / (float)h));
+            context.scene.getCamera().aspectRatio.set(Float.valueOf((float)w / (float)h));
         });
         GL11.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         GL11.glEnable(2929);
@@ -85,7 +85,7 @@ implements IDisposable {
     }
 
     private void doTick() {
-        AbstractScene scene = context.scene;
+        IScene scene = context.scene;
         if (context.inputManager != null) {
             context.inputManager.processInput(context);
         }
@@ -99,7 +99,7 @@ implements IDisposable {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    public void setScene(AbstractScene scene) {
+    public void setScene(IScene scene) {
         
         synchronized (lock_obj) {
             if (context.scene != null) {

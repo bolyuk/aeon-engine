@@ -3,7 +3,10 @@
  */
 package org.bl0.aeon.test.game;
 
+import bl0.bjs.common.base.IContext;
+import bl0.bjs.socket.base.IWSBase;
 import org.bl0.aeon.core.c.Colors;
+import org.bl0.aeon.core.components.Camera;
 import org.bl0.aeon.core.components.data.Transform;
 import org.bl0.aeon.engine.context.DrawContext;
 import org.bl0.aeon.engine.context.GameContext;
@@ -11,15 +14,23 @@ import org.bl0.aeon.core.entity.Entity;
 import org.bl0.aeon.engine.fabrics.LightFabric;
 import org.bl0.aeon.engine.fabrics.MaterialFabric;
 import org.bl0.aeon.engine.fabrics.MeshFabric;
-import org.bl0.aeon.engine.scene.AbstractScene;
+import org.bl0.aeon.engine.scene.BaseScene;
 import org.bl0.aeon.test.game.world.World;
 import org.joml.Vector3f;
 
 public class TestScene
-extends AbstractScene {
+extends BaseScene {
     Entity cube = new Entity();
     Entity light = new Entity();
     Entity directionalLight = new Entity();
+
+    private final IContext ctx;
+    private final IWSBase chanel;
+
+    public TestScene(IContext ctx, IWSBase chanel) {
+        this.ctx = ctx;
+        this.chanel = chanel;
+    }
 
     @Override
     public void OnBeforeRender(DrawContext drawCtx, GameContext gameCtx) {
@@ -35,6 +46,11 @@ extends AbstractScene {
         float x = (float)Math.sin(time) * radius;
         float z = (float)Math.cos(time) * radius;
         this.light.get(Transform.class).position.change(obj -> obj.set(x, z, z * x));
+    }
+
+    @Override
+    public Camera getCamera() {
+        return camera;
     }
 
     @Override

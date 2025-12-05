@@ -3,9 +3,11 @@
  */
 package org.bl0.aeon.test.game;
 
+import bl0.bjs.socket.base.IWSBase;
 import org.bl0.aeon.core.components.Camera;
 import org.bl0.aeon.engine.context.GameContext;
 import org.bl0.aeon.engine.interfaces.input.AbstractInputManager;
+import org.bl0.aeon.test.com.IGameService;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.glfw.GLFW;
@@ -41,15 +43,18 @@ extends AbstractInputManager {
         float x = (float)(Math.cos(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch)));
         float y = (float)Math.sin(Math.toRadians(this.pitch));
         float z = (float)(Math.sin(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch)));
-        Camera camera = this.gameContext.scene.camera;
+        Camera camera = this.gameContext.scene.getCamera();
         camera.direction.set(new Vector3f(x, y, z).normalize());
+
+        IGameService service = ((IGameService)gameContext.scene);
+        service.commitMove(camera.position.get(), camera.direction.get(), null);
     };
 
     @Override
     public void processInput(GameContext gameContext) {
         long window = gameContext.window.ID;
-        Camera camera = gameContext.scene.camera;
-        float velocity = (float)((double)gameContext.scene.camera.speed * gameContext.deltaTime);
+        Camera camera = gameContext.scene.getCamera();
+        float velocity = (float)((double)camera.speed * gameContext.deltaTime);
         if (GLFW.glfwGetKey(window, 87) == 1) {
             camera.position.change(obj -> obj.fma(velocity, (Vector3fc)camera.direction.get()));
         }

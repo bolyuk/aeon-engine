@@ -4,16 +4,17 @@
 package org.bl0.aeon.engine.context;
 
 import org.bl0.aeon.core.ResourceManager;
-import org.bl0.aeon.engine.scene.AbstractScene;
+import org.bl0.aeon.engine.scene.BaseScene;
 import org.bl0.aeon.core.graphic.Window;
 import org.bl0.aeon.engine.interfaces.input.AbstractInputManager;
 import org.bl0.aeon.engine.interfaces.IDisposable;
+import org.bl0.aeon.engine.scene.IScene;
 
 public class GameContext
 implements IDisposable {
     public ResourceManager resourceManager = new ResourceManager(this);
     public Window window;
-    public AbstractScene scene;
+    public IScene scene;
     public AbstractInputManager inputManager;
     public double deltaTime = 0.0;
 

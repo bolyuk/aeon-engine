@@ -5,7 +5,7 @@ package org.bl0.aeon.engine.context;
 
 import org.bl0.aeon.core.entity.Entity;
 
-public abstract class SceneContext {
-    public abstract void add(Entity var1);
+public interface ISceneContext {
+    void add(Entity var1);
 }
 
