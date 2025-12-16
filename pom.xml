@@ -4,19 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>bl0.game</groupId>
-    <artifactId>aeon-eng</artifactId>
+    <groupId>bl0.aeon</groupId>
+    <artifactId>aeon-engine</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>gl-core</module>
+        <module>common</module>
+        <module>engine</module>
+        <module>test</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>24</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <lwjgl.version>3.3.6</lwjgl.version>
         <lwjgl.natives>natives-linux</lwjgl.natives>
         <main.class>org.bl0.aeon.test.game.Main</main.class>
     </properties>
 
-    <!-- ВАЖНО: BOM импортируется тут -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -30,7 +36,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- LWJGL: core + natives -->
         <dependency>
             <groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
         </dependency>
@@ -38,8 +43,6 @@
             <groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
             <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
         </dependency>
-
-        <!-- GLFW + natives -->
         <dependency>
             <groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
         </dependency>
@@ -47,8 +50,6 @@
             <groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
             <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
         </dependency>
-
-        <!-- OpenGL (Java binding; нативок у opengl-модуля нет, но оставим симметрию) -->
         <dependency>
             <groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
         </dependency>
@@ -57,7 +58,6 @@
             <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
         </dependency>
 
-        <!-- Остальные зависимости -->
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
@@ -67,24 +67,6 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>13.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>bl0.bjs.framework</groupId>
-            <artifactId>sockets</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>bl0.bjs.framework</groupId>
-            <artifactId>boot</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>bl0.bjs.framework</groupId>
-            <artifactId>boot</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
