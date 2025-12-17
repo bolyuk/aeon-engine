@@ -1,0 +1,21 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package bl0.aeon.gl.fabrics;
+
+import org.bl0.aeon.core.graphic.shaders.ShaderProgram;
+
+public class ShaderFabric {
+    public static ShaderProgram solidColor() {
+        String vertexShader = "    #version 330 core\n    layout(location = 0) in vec3 aPos;\n\n    uniform mat4 $model;\n    uniform mat4 $view;\n    uniform mat4 $projection;\n\n    void main() {\n        gl_Position = $projection * $view * $model * vec4(aPos, 1.0);\n    }\n".replace("$model", "model").replace("$view", "view").replace("$projection", "projection");
+        String fragmentShader = "    #version 330 core\n    out vec4 FragColor;\n\n    uniform vec4 $color;\n\n    void main() {\n        FragColor = $color;\n    }\n".replace("$color", "color");
+        return ShaderProgram.gen(vertexShader, fragmentShader);
+    }
+
+    public static ShaderProgram solidColorShadow() {
+        String vertexShader = "    #version 330 core\n             layout (location = 0) in vec3 aPos;\n             layout (location = 1) in vec3 aNormal;\n\n             out vec3 FragPos;\n             out vec3 Normal;\n\n             uniform mat4 model;\n             uniform mat4 view;\n             uniform mat4 projection;\n\n             void main()\n             {\n                 FragPos = vec3(model * vec4(aPos, 1.0));\n                 Normal = mat3(transpose(inverse(model))) * aNormal;\n                 gl_Position = projection * view * vec4(FragPos, 1.0);\n             }\n";
+        String fragmentShader = "#version 330 core\n\nout vec4 FragColor;\n\nstruct PointLight {\n    vec3 position;\n\n    float constant;\n    float linear;\n    float quadratic;\n\n    vec3 ambient;\n    vec3 diffuse;\n    vec3 specular;\n};\n\nstruct DirLight {\n    vec3 direction;\n    vec3 ambient;\n    vec3 diffuse;\n    vec3 specular;\n};\n\n#define NR_POINT_LIGHTS 4\n\nin vec3 FragPos;\nin vec3 Normal;\n\nuniform vec3 viewPos;\nuniform vec4 color;\n\nuniform PointLight pointLight[NR_POINT_LIGHTS];\nuniform DirLight dirLight;\n\nvec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {\n    vec3 lightDir = normalize(light.position - fragPos);\n\n    // diffuse\n    float diff = max(dot(normal, lightDir), 0.0);\n\n    // specular\n    vec3 reflectDir = reflect(-lightDir, normal);\n    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);\n    spec = clamp(spec, 0.0, 1.0);\n\n    // attenuation\n    float distance = length(light.position - fragPos);\n    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));\n\n    // apply lighting (no texture, just color.rgb)\n    vec3 ambient  = light.ambient  * color.rgb;\n    vec3 diffuse  = light.diffuse  * diff * color.rgb;\n    vec3 specular = light.specular * spec * color.rgb;\n\n    ambient *= attenuation;\n    diffuse *= attenuation;\n    specular *= attenuation;\n\n    return (ambient+diffuse+specular);\n}\n\nvec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)\n{\n    vec3 lightDir = normalize(-light.direction);\n\n    // diffuse shading\n    float diff = max(dot(normal, lightDir), 0.0);\n\n    // specular shading\n    vec3 reflectDir = reflect(-lightDir, normal);\n    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);\n    spec = clamp(spec, 0.0, 1.0);\n\n    // combine results\n    vec3 ambient = light.ambient * color.rgb;\n    vec3 diffuse = light.diffuse * diff * color.rgb;\n    vec3 specular = light.specular * spec * color.rgb;\n\n    return (ambient + diffuse + specular);\n}\n\nvoid main() {\n    vec3 norm = normalize(Normal);\n    vec3 viewDir = normalize(viewPos - FragPos);\n\n    vec3 result = color.rgb * 0.05;\n    result += CalcDirLight(dirLight, norm, viewDir);\n    for (int i = 0; i < NR_POINT_LIGHTS; i++) {\n        if (length(pointLight[i].diffuse) > 0.001) {\n            result += CalcPointLight(pointLight[i], norm, FragPos, viewDir);\n        }\n    }\n\n    FragColor = vec4(clamp(result, 0.0, 1.0), color.a);\n}\n\n";
+        return ShaderProgram.gen(vertexShader, fragmentShader);
+    }
+}
+
