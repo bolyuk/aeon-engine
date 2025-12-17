@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$APPLICATION_HOME_DIR$/src/main/java" charset="UTF-8" />
-    <file url="file://$APPLICATION_HOME_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gl-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gl-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/test/src/main/java" charset="UTF-8" />
@@ -24,6 +23,7 @@
     <file url="file://$PROJECT_DIR$/../framework/db/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/db/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/eventbus/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../framework/eventbus/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/events/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/logging/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/logging/src/main/resources" charset="UTF-8" />
@@ -35,5 +35,7 @@
     <file url="file://$PROJECT_DIR$/../framework/sockets/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../framework/src/main/resources" charset="UTF-8" />
+    <file url="file://$APPLICATION_HOME_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$APPLICATION_HOME_DIR$/src/main/resources" charset="UTF-8" />
   </component>
 </project>
