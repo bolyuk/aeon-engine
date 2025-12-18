@@ -5,6 +5,7 @@ import bl0.aeon.common.context.IFrameContext;
 import bl0.aeon.common.context.IGameSettings;
 import bl0.aeon.common.core.IDispatcher;
 import bl0.aeon.common.core.IResourceManager;
+import bl0.aeon.gl.ResourceManager;
 import bl0.bjs.common.async.control.IAsyncBus;
 import bl0.bjs.common.base.IContext;
 import bl0.bjs.eventbus.IEventBus;
@@ -13,7 +14,7 @@ import bl0.bjs.services.IServiceContainer;
 
 public class EngineContext implements IEngineContext, IContext {
     private final IContext ctx;
-    private final IResourceManager resManager = null;
+    private final IResourceManager resManager;
     private final IGameSettings gameSettings;
     private final IDispatcher dispatcher;
     private final IFrameContext frameContext = new FrameContext();
@@ -22,6 +23,7 @@ public class EngineContext implements IEngineContext, IContext {
         this.ctx = ctx;
         this.gameSettings = gameSettings;
         this.dispatcher = dispatcher;
+        this.resManager = new ResourceManager(this);
     }
 
     @Override

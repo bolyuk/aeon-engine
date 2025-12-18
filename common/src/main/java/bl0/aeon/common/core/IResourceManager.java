@@ -11,4 +11,6 @@ public interface IResourceManager {
     <T extends IResource> void registerResource(T resource);
 
     <T extends IResource> void registerResource(String jsonResource, Class<T> type);
+
+    void clear();
 }
