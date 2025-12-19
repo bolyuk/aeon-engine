@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>bl0.aeon</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>gl-common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

@@ -1,0 +1,32 @@
+package bl0.aeon.engine.data.component;
+
+import bl0.aeon.common.data.component.Transform;
+import bl0.aeon.render.common.c.Vectors;
+import bl0.bjs.common.core.relations.BoundObject;
+import bl0.bjs.common.core.relations.NotifyObject;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+public class AE_Transform extends BaseComponent implements Transform {
+    public final NotifyObject<Vector3f> position = new NotifyObject<Vector3f>(new Vector3f());
+    public final NotifyObject<Vector3f> scale = new NotifyObject<Vector3f>(Vectors.ONE());
+    public final NotifyObject<Quaternionf> rotation = new NotifyObject<Quaternionf>(new Quaternionf());
+    public final BoundObject<Matrix4f> matrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> new Matrix4f().translate(this.position.get()).rotate(this.rotation.get()).scale(this.scale.get()), this.position, this.rotation, this.scale);
+
+    public AE_Transform setPos(Vector3f pos) {
+        this.position.set(pos);
+        return this;
+    }
+
+    public AE_Transform setScale(Vector3f scale) {
+        this.scale.set(scale);
+        return this;
+    }
+
+    @Override
+    public Matrix4f getMatrix(){
+        return this.matrix.get();
+    }
+}
+

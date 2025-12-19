@@ -1,10 +1,9 @@
 package bl0.aeon.gl.graphic.uniforms;
 
-import bl0.aeon.gl.graphic.GLMaterial;
-import bl0.aeon.gl.graphic.shaders.GLShaderProgram;
+import bl0.aeon.gl.graphic.GLShaderProgram;
 
 public class MaterialUniforms {
-    public static void setUniforms(GLMaterial obj, GLShaderProgram shaderProgram) {
-        shaderProgram.setUniform("color", obj.color);
+    public static void setUniforms(Material obj, GLShaderProgram shaderProgram) {
+        shaderProgram.setUniform("color", obj.getColor());
     }
 }

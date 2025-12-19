@@ -1,11 +1,9 @@
 package bl0.aeon.gl.core;
 
-import bl0.aeon.common.core.GameEngine;
-import bl0.aeon.common.core.SceneRenderer;
-import bl0.aeon.common.context.IGameSettings;
-import bl0.aeon.common.context.IRenderContext;
-import bl0.aeon.common.core.IDispatcher;
-import bl0.aeon.gl.base.IDisposable;
+import bl0.aeon.render.common.core.RenderEngine;
+import bl0.aeon.render.common.core.IRenderContext;
+import bl0.aeon.render.common.resource.IDisposable;
+import bl0.aeon.gl.base.CoreException;
 import bl0.aeon.gl.graphic.Window;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
@@ -16,19 +14,17 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-public class GLEngine extends BJSBaseClass implements GameEngine, IDisposable, SceneRenderer {
+public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine {
 
     private final ActionController<Pair<Integer, Integer>> windowSizeChangedController = new ActionController<>();
 
-    private final EngineContext engineCtx;
     private Window window;
 
-    public GLEngine(IContext ctx, IGameSettings settings, IDispatcher dispatcher) {
+    public GLEngine(IContext ctx) {
         super(ctx);
-        this.engineCtx = new EngineContext(ctx, settings, dispatcher);
     }
 
-    public void init() {
+    private void initGL() {
         GLFW.glfwInit();
         GLFW.glfwWindowHint(139266, 3);
         GLFW.glfwWindowHint(139267, 3);
@@ -56,30 +52,6 @@ public class GLEngine extends BJSBaseClass implements GameEngine, IDisposable, S
         windowSizeChangedController.unregister(onWindowSizeChangedListener);
     }
 
-    public void start() {
-        throwIfNotInitialized();
-        isRunning = true;
-        lastFrame = GLFW.glfwGetTime();
-        while (isRunning && !GLFW.glfwWindowShouldClose(context.window.ID)) {
-            
-            synchronized (lock_obj) {
-                GL11.glClear(16640);
-                double current = GLFW.glfwGetTime();
-                double delta = current - lastFrame;
-                lastFrame = current;
-                if (delta > 1.0 || delta <= 0.0) {
-                    delta = 0.016;
-                }
-                drawContext.deltaTime = delta;
-                context.deltaTime = delta;
-                doTick();
-                GLFW.glfwSwapBuffers(context.window.ID);
-                GLFW.glfwPollEvents();
-            }
-        }
-    }
-
-
     @Override
     public void render(IRenderContext renderContext) {
         if(!GLFW.glfwWindowShouldClose(window.ID)) {
@@ -97,10 +69,15 @@ public class GLEngine extends BJSBaseClass implements GameEngine, IDisposable, S
     }
 
     @Override
-    public void createWindow(String title, int width, int height) {
+    public void initialize(String title, int width, int height) {
         try {
             this.window = new Window(width, height, title);
-            ((FrameContext)this.engineCtx.getFrameContext()).window = this.window;
+
+            window.ID = GLFW.glfwCreateWindow(width, height, title, 0L, 0L);
+            if (window.ID == 0L) {
+                throw new CoreException("Failed to create the GLFW window");
+            }
+            initGL();
         } catch (Exception e) {
             l.err(e);
             GLFW.glfwTerminate();

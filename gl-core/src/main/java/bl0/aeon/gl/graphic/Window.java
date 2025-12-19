@@ -11,10 +11,6 @@ public class Window {
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
-        this.ID = GLFW.glfwCreateWindow(width, height, title, 0L, 0L);
-        if (this.ID == 0L) {
-            throw new CoreException("Failed to create the GLFW window");
-        }
     }
 }
 

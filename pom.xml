@@ -10,9 +10,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>gl-core</module>
-        <module>common</module>
+        <module>gl-common</module>
         <module>engine</module>
         <module>test</module>
+        <module>engine-common</module>
     </modules>
 
     <properties>

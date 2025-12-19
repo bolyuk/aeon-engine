@@ -1,10 +1,9 @@
 package bl0.aeon.gl.core;
 
-import bl0.aeon.common.context.IEngineContext;
-import bl0.aeon.common.context.IFrameContext;
-import bl0.aeon.common.context.IGameSettings;
+import bl0.aeon.base.core.IEngineContext;
+import bl0.aeon.base.core.IFrameContext;
 import bl0.aeon.common.core.IDispatcher;
-import bl0.aeon.common.core.IResourceManager;
+import bl0.aeon.base.core.IResourceManager;
 import bl0.aeon.gl.ResourceManager;
 import bl0.bjs.common.async.control.IAsyncBus;
 import bl0.bjs.common.base.IContext;
@@ -15,13 +14,11 @@ import bl0.bjs.services.IServiceContainer;
 public class EngineContext implements IEngineContext, IContext {
     private final IContext ctx;
     private final IResourceManager resManager;
-    private final IGameSettings gameSettings;
     private final IDispatcher dispatcher;
     private final IFrameContext frameContext = new FrameContext();
 
-    public EngineContext(IContext ctx, IGameSettings gameSettings, IDispatcher dispatcher) {
+    public EngineContext(IContext ctx, IDispatcher dispatcher) {
         this.ctx = ctx;
-        this.gameSettings = gameSettings;
         this.dispatcher = dispatcher;
         this.resManager = new ResourceManager(this);
     }
@@ -29,11 +26,6 @@ public class EngineContext implements IEngineContext, IContext {
     @Override
     public IResourceManager getResourceManager() {
         return resManager;
-    }
-
-    @Override
-    public IGameSettings getSettings() {
-        return gameSettings;
     }
 
     @Override

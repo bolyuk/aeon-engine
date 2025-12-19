@@ -2,7 +2,7 @@ package bl0.aeon.gl.graphic.uniforms;
 
 import bl0.aeon.common.data.component.light.PointLight;
 import bl0.aeon.gl.c.Uniforms;
-import bl0.aeon.gl.graphic.shaders.GLShaderProgram;
+import bl0.aeon.gl.graphic.GLShaderProgram;
 
 public class PointLightUniforms {
     public static void setUniforms(PointLight obj, GLShaderProgram shaderProgram) {
