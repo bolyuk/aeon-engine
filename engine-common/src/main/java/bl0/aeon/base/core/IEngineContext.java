@@ -1,8 +1,12 @@
 package bl0.aeon.base.core;
 
-import bl0.aeon.render.common.resource.IResourceManager;
+import bl0.aeon.base.scene.Scene;
+import bl0.aeon.base.stage.IDispatcher;
+import bl0.aeon.render.common.core.IResourceManager;
 
 public interface IEngineContext {
-    bl0.aeon.base.core.IResourceManager getResourceManager();
-    IFrameContext getFrameContext();
+    IDispatcher getDispatcher();
+    IResourceManager getResourceManager();
+
+    void setScene(Scene scene);
 }

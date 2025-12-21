@@ -1,7 +1,7 @@
 package bl0.aeon.gl.core;
 
 import bl0.aeon.render.common.core.RenderEngine;
-import bl0.aeon.render.common.core.IRenderContext;
+import bl0.aeon.render.common.core.RenderFrame;
 import bl0.aeon.render.common.resource.IDisposable;
 import bl0.aeon.gl.base.CoreException;
 import bl0.aeon.gl.graphic.Window;
@@ -53,7 +53,7 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
     }
 
     @Override
-    public void render(IRenderContext renderContext) {
+    public void render(RenderFrame renderContext) {
         if(!GLFW.glfwWindowShouldClose(window.ID)) {
             GL11.glClear(16640);
 

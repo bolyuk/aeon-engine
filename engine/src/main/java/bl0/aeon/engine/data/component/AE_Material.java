@@ -1,7 +1,7 @@
 package bl0.aeon.engine.data.component;
 
+import bl0.aeon.base.component.graphic.Material;
 import bl0.aeon.render.common.resource.IResource;
-import bl0.aeon.common.data.component.graphic.Material;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import org.joml.Vector4f;
 

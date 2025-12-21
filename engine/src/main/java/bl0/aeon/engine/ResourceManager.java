@@ -2,27 +2,18 @@ package bl0.aeon.engine;
 
 import bl0.aeon.base.exception.ResourceException;
 import bl0.aeon.render.common.resource.IResource;
-import bl0.aeon.render.common.c.ShaderPrograms;
-import bl0.aeon.base.core.IResourceManager;
-import bl0.aeon.render.common.resource.ShaderProgram;
+import bl0.aeon.render.common.core.IResourceManager;
 import bl0.aeon.render.common.resource.IDisposable;
 import bl0.bjs.common.base.BJSBaseClass;
+import bl0.bjs.common.base.IContext;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ResourceManager extends BJSBaseClass implements IResourceManager {
     private final ConcurrentHashMap<String, IResource> resources = new ConcurrentHashMap<>();
-    private final EngineContext context;
 
-    public ResourceManager(EngineContext ctx) {
+    public ResourceManager(IContext ctx) {
         super(ctx);
-        this.context = ctx;
-        loadDefaultResources();
-    }
-
-    private void loadDefaultResources() {
-        registerResource(new GLShaderProgram(Shaders.VERTEX_SOLID_COLOR, Shaders.FRAGMENT_SOLID_COLOR, ShaderPrograms.SOLID_COLOR));
-        registerResource(new GLShaderProgram(Shaders.VERTEX_SOLID_COLOR_SHADOW, Shaders.FRAGMENT_SOLID_COLOR_SHADOW, ShaderPrograms.SOLID_COLOR_SHADOW));
     }
 
     @Override
@@ -61,11 +52,6 @@ public class ResourceManager extends BJSBaseClass implements IResourceManager {
                d.dispose();
         });
         resources.clear();
-    }
-
-    @Override
-    public ShaderProgram buildShaderProgram(String vertexShader, String fragmentShader, String name) {
-        return new GLShaderProgram(vertexShader, fragmentShader, name);
     }
 }
 

@@ -1,4 +1,4 @@
-package bl0.aeon.base.core;
+package bl0.aeon.render.common.core;
 
 import bl0.aeon.render.common.resource.IResource;
 
