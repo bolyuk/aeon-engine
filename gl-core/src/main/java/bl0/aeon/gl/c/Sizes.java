@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- */
 package bl0.aeon.gl.c;
 
 public final class Sizes {

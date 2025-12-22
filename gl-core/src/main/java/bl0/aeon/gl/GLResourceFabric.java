@@ -1,26 +1,40 @@
-package bl0.aeon.gl.fabrics;
+package bl0.aeon.gl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.bl0.aeon.core.components.data.res.Mesh;
-import org.bl0.aeon.core.graphic.mesh.VertexAttribute;
+
+import bl0.aeon.gl.graphic.GLShaderProgram;
+import bl0.aeon.gl.graphic.mesh.GLMesh;
+import bl0.aeon.gl.graphic.mesh.VertexAttribute;
+import bl0.aeon.render.common.core.IResourceFabric;
+import bl0.aeon.render.common.resource.Mesh;
+import bl0.aeon.render.common.resource.ShaderProgram;
 import org.joml.Vector3f;
 
-public class MeshFabric {
-    public static Mesh cube() {
+public class GLResourceFabric implements IResourceFabric {
+
+    @Override
+    public ShaderProgram createShaderProgram(String vertexShader, String fragmentShader, String name) {
+        return new GLShaderProgram(vertexShader, fragmentShader, name);
+    }
+
+    @Override
+    public Mesh createCube(String name) {
         float[] vertices = new float[]{-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
-        ArrayList<VertexAttribute> attr = new ArrayList<VertexAttribute>();
+        ArrayList<VertexAttribute> attr = new ArrayList<>();
         attr.add(new VertexAttribute(3));
         attr.add(new VertexAttribute(3));
-        return new Mesh(vertices, attr);
+        return new GLMesh(vertices, attr, name);
     }
 
-    public static Mesh plane() {
+    @Override
+    public Mesh createPlane(String name) {
         float[] vertices = new float[]{0.5f, 0.5f, 0.0f, 0.5f, -0.5f, 0.0f, -0.5f, -0.5f, 0.0f, -0.5f, 0.5f, 0.0f};
-        return new Mesh(vertices, null);
+        return new GLMesh(vertices, null, name);
     }
 
-    public static Mesh sphere(int sectorCount, int stackCount, float radius) {
+    @Override
+    public Mesh createSphere(int sectorCount, int stackCount, float radius, String name) {
         ArrayList<Float> vertexData = new ArrayList<Float>();
         for (int i = 0; i < stackCount; ++i) {
             float stackAngle1 = 1.5707964f - (float)i * (float)Math.PI / (float)stackCount;
@@ -37,15 +51,15 @@ public class MeshFabric {
                 float x2 = r2 * (float)Math.cos(sectorAngle);
                 float y2 = r2 * (float)Math.sin(sectorAngle);
                 if (i != 0) {
-                    MeshFabric.addVertex(vertexData, x1, y1, z1);
-                    MeshFabric.addNormal(vertexData, x1, y1, z1);
-                    MeshFabric.addVertex(vertexData, x2, y2, z2);
-                    MeshFabric.addNormal(vertexData, x2, y2, z2);
+                    GLResourceFabric.addVertex(vertexData, x1, y1, z1);
+                    GLResourceFabric.addNormal(vertexData, x1, y1, z1);
+                    GLResourceFabric.addVertex(vertexData, x2, y2, z2);
+                    GLResourceFabric.addNormal(vertexData, x2, y2, z2);
                     sectorAngleNext = (float)(Math.PI * 2 * (double)(j + 1) / (double)sectorCount);
                     float x1n = r1 * (float)Math.cos(sectorAngleNext);
                     float y1n = r1 * (float)Math.sin(sectorAngleNext);
-                    MeshFabric.addVertex(vertexData, x1n, y1n, z1);
-                    MeshFabric.addNormal(vertexData, x1n, y1n, z1);
+                    GLResourceFabric.addVertex(vertexData, x1n, y1n, z1);
+                    GLResourceFabric.addNormal(vertexData, x1n, y1n, z1);
                 }
                 if (i == stackCount - 1) continue;
                 sectorAngleNext = (float)(Math.PI * 2 * (double)(j + 1) / (double)sectorCount);
@@ -53,12 +67,12 @@ public class MeshFabric {
                 float y2n = r2 * (float)Math.sin(sectorAngleNext);
                 float x1n = r1 * (float)Math.cos(sectorAngleNext);
                 float y1n = r1 * (float)Math.sin(sectorAngleNext);
-                MeshFabric.addVertex(vertexData, x1n, y1n, z1);
-                MeshFabric.addNormal(vertexData, x1n, y1n, z1);
-                MeshFabric.addVertex(vertexData, x2, y2, z2);
-                MeshFabric.addNormal(vertexData, x2, y2, z2);
-                MeshFabric.addVertex(vertexData, x2n, y2n, z2);
-                MeshFabric.addNormal(vertexData, x2n, y2n, z2);
+                GLResourceFabric.addVertex(vertexData, x1n, y1n, z1);
+                GLResourceFabric.addNormal(vertexData, x1n, y1n, z1);
+                GLResourceFabric.addVertex(vertexData, x2, y2, z2);
+                GLResourceFabric.addNormal(vertexData, x2, y2, z2);
+                GLResourceFabric.addVertex(vertexData, x2n, y2n, z2);
+                GLResourceFabric.addNormal(vertexData, x2n, y2n, z2);
             }
         }
         float[] vertices = new float[vertexData.size()];
@@ -66,7 +80,7 @@ public class MeshFabric {
             vertices[i] = ((Float)vertexData.get(i)).floatValue();
         }
         List<VertexAttribute> attr = List.of(new VertexAttribute(3), new VertexAttribute(3));
-        return new Mesh(vertices, attr);
+        return new GLMesh(vertices, attr, name);
     }
 
     private static void addVertex(List<Float> list, float x, float y, float z) {

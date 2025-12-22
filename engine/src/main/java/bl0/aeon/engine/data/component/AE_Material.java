@@ -6,8 +6,8 @@ import bl0.aeon.render.common.resource.ShaderProgram;
 import org.joml.Vector4f;
 
 public class AE_Material extends BaseComponent implements Material {
-    public ShaderProgram shaderProgram;
-    public Vector4f color;
+    private ShaderProgram shaderProgram;
+    private Vector4f color;
 
     @Override
     public void setColor(Vector4f color) {
@@ -20,6 +20,16 @@ public class AE_Material extends BaseComponent implements Material {
             this.shaderProgram = glsp;
         } else
             throw new IllegalArgumentException("wrong resource type");
+    }
+
+    @Override
+    public ShaderProgram getShaderProgram() {
+        return shaderProgram;
+    }
+
+    @Override
+    public Vector4f getColor() {
+        return color;
     }
 }
 

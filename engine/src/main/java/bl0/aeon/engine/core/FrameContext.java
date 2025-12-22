@@ -1,11 +1,11 @@
-package bl0.aeon.gl.core;
+package bl0.aeon.engine.core;
 
 import bl0.aeon.base.core.IFrameContext;
-import bl0.aeon.gl.graphic.Window;
 
 public class FrameContext implements IFrameContext {
-    public double deltaTime = 0.0;
-    public Window window;
+    public double deltaTime;
+    public int width;
+    public int height;
 
     @Override
     public double getDeltaTime() {
@@ -14,12 +14,11 @@ public class FrameContext implements IFrameContext {
 
     @Override
     public int getWidth() {
-        return window.width;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        return window.height;
+        return height;
     }
 }
-

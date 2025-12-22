@@ -20,8 +20,12 @@ public class Dispatcher implements IDispatcher {
         ActionController<IEngineContext> controller = data.get(stage);
         if(controller == null)
             return;
+        try {
+            controller.invoke(ctx);
+            controller.clear();
+        } catch(Exception e) {
+            ctx.getDefaultLogger().err(stage+" err: "+e.getMessage());
+        }
 
-        controller.invoke(ctx);
-        controller.clear();
     }
 }

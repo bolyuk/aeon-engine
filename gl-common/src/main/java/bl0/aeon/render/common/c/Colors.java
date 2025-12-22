@@ -13,7 +13,6 @@ public final class Colors {
     public static final Vector4f MAGENTA = new Vector4f(1.0f, 0.0f, 1.0f, 1.0f);
     public static final Vector4f GRAY = new Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
 
-    private Colors() {
-    }
+    private Colors() {}
 }
 

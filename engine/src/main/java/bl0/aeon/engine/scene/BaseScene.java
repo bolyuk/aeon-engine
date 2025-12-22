@@ -1,61 +1,53 @@
 package bl0.aeon.engine.scene;
 
 import java.util.ArrayList;
-import org.bl0.aeon.core.components.Camera;
-import org.bl0.aeon.core.components.data.res.Material;
-import org.bl0.aeon.engine.context.DrawContext;
-import org.bl0.aeon.engine.context.GameContext;
-import org.bl0.aeon.engine.context.ISceneContext;
-import org.bl0.aeon.core.entity.Entity;
-import org.bl0.aeon.core.graphic.shaders.ShaderProgram;
-import org.bl0.aeon.engine.interfaces.IDisposable;
-import org.bl0.aeon.engine.interfaces.bind.IBindWData;
-import org.bl0.aeon.engine.interfaces.component.IComponent;
-import org.bl0.aeon.core.systems.LightSystem;
+import java.util.List;
 
-public abstract class BaseScene
-implements IScene, ISceneContext {
-    protected ArrayList<Entity> entities = new ArrayList();
-    public Camera camera = new Camera();
+import bl0.aeon.base.core.IEngineContext;
+import bl0.aeon.base.scene.Scene;
+import bl0.aeon.base.scene.SceneObject;
+import bl0.aeon.render.common.data.render.Camera;
+
+public class BaseScene implements Scene {
+
+    protected ArrayList<SceneObject> entities = new ArrayList();
+    protected Camera camera = new AE_Camera();
+
+    protected IEngineContext eCtx;
 
     @Override
-    public void add(Entity entity) {
-        this.entities.add(entity);
-        entity.sceneContext = this;
-        entity.onAdded();
-    }
-
-    protected void disposeEntity(Entity entity) {
-        entity.dispose();
-        this.entities.remove(entity);
-    }
-
-    public void update(GameContext gameCtx) {
-        this.OnBeforeUpdate(gameCtx);
-        this.entities.forEach(entity -> entity.getEvery(IComponent.class).forEach(c -> c.OnBeforeUpdate(gameCtx)));
-    }
-
-    public void render(DrawContext drawCtx, GameContext gameCtx) {
-        this.OnBeforeRender(drawCtx, gameCtx);
-        for (Entity e : this.entities) {
-            e.getEvery(IComponent.class).forEach(c -> c.OnBeforeRender(drawCtx, gameCtx));
-            Material m = e.get(Material.class);
-            if (m == null) continue;
-            ShaderProgram s = m.shaderProgram;
-            e.bind();
-            e.setUniforms(s);
-            LightSystem.prepareUniformsFor(e, s, this.entities);
-            gameCtx.scene.getCamera().setUniforms(s);
-            e.draw(drawCtx);
-            e.unbind();
+    public void onUpdate(IEngineContext ctx) {
+        for(SceneObject object : entities) {
+            object.update(ctx.getFrameContext(), ctx);
         }
     }
 
+    public void onShowed(IEngineContext ctx) {
+        this.eCtx = ctx;
+    }
+
+    public void onHided(IEngineContext ctx) {
+        this.eCtx = null;
+    }
+
     @Override
-    public void dispose() {
-        this.unbind(null);
-        this.entities.forEach(Entity::dispose);
-        this.entities.clear();
+    public List<SceneObject> getSceneObjects() {
+        return entities;
+    }
+
+    @Override
+    public Camera getCamera() {
+        return camera;
+    }
+
+    @Override
+    public void add(SceneObject sceneObject) {
+        entities.add(sceneObject);
+    }
+
+    @Override
+    public void remove(SceneObject sceneObject) {
+        entities.remove(sceneObject);
     }
 }
 
