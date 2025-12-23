@@ -10,7 +10,9 @@ import bl0.aeon.render.common.core.RenderEngine;
 import bl0.aeon.render.common.core.RenderFrame;
 import bl0.aeon.render.common.data.input.InputData;
 import bl0.aeon.render.common.data.input.Key;
+import bl0.aeon.render.common.data.render.IInstancedRenderable;
 import bl0.aeon.render.common.data.render.IRenderable;
+import bl0.aeon.render.common.data.render.ISingleRenderable;
 import bl0.aeon.render.common.resource.IDisposable;
 import bl0.aeon.gl.base.CoreException;
 import bl0.aeon.gl.graphic.Window;
@@ -143,6 +145,11 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
     }
 
     @Override
+    public void terminate() {
+        dispose();
+    }
+
+    @Override
     public void captureCursor(boolean flag) {
         GLFW.glfwSetInputMode(window.ID, GLFW.GLFW_CURSOR, flag ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR);
     }
@@ -153,8 +160,13 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
 
     @Override
     public void render(RenderFrame renderContext) {
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        innerRender(renderContext);
+        try {
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            GL30.glClearColor(0,0,0,1f);
+            innerRender(renderContext);
+        } catch(Throwable t) {
+            ctx.generateLogger(this.getClass()).err(t);
+        }
     }
 
     private void innerRender(RenderFrame rFrame) {
@@ -176,12 +188,24 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
             }
 
             CameraUniforms.setUniforms(rFrame.getCamera(), program);
-            MaterialUniforms.setUniforms(obj, program);
-            TransformUniforms.setUniforms(obj, program);
             LightUniforms.setUniforms(obj, program);
             TextureUniforms.setUniforms(texture, program);
+            MaterialUniforms.setUniforms(obj, program);
 
-            mesh.draw();
+            if(!obj.isDepthTestEnabled())
+                GL30.glDisable(GL30.GL_DEPTH_TEST);
+
+            if(obj instanceof ISingleRenderable isr) {
+                TransformUniforms.setUniforms(isr, program);
+                mesh.draw();
+            } else if(obj instanceof IInstancedRenderable iir) {
+                mesh.enableMatrixInstancing(3, iir.getInstanceCount());
+                mesh.uploadInstanceMatrices(iir.getInstanceMatrices(), iir.getInstanceCount());
+                mesh.drawInstanced(iir.getInstanceCount());
+            }
+
+            if(!obj.isDepthTestEnabled())
+                GL30.glEnable(GL30.GL_DEPTH_TEST);
 
             if(texture != null)
                 texture.unbind();

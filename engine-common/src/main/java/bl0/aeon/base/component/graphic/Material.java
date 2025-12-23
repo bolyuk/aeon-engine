@@ -15,4 +15,7 @@ public interface Material extends Component {
     ShaderProgram getShaderProgram();
     Vector4f getColor();
     Texture getTexture();
+
+    boolean isDepthTestEnabled();
+    void setDepthTestEnabled(boolean enabled);
 }

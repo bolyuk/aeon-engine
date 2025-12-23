@@ -1,4 +1,4 @@
-package bl0.aeon.framework.components;
+package bl0.aeon.framework.components.xyz;
 
 import bl0.aeon.base.component.interfaces.UpdateConsumerComponent;
 import bl0.aeon.base.component.graphic.Transform;

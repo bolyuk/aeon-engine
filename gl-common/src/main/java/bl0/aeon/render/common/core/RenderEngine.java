@@ -23,6 +23,8 @@ public interface RenderEngine {
 
     InputData pollInputData();
 
+    void terminate();
+
     void captureCursor(boolean flag);
 
     void setOnWindowSizeChangedListener(Action<Pair<Integer, Integer>> onWindowSizeChangedListener);

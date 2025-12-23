@@ -6,6 +6,7 @@ import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.render.common.data.light.DirectionalLight;
 import bl0.aeon.render.common.data.light.PointLight;
 import bl0.aeon.render.common.data.render.IRenderable;
+import bl0.aeon.render.common.data.render.ISingleRenderable;
 
 public class LightUniforms {
 

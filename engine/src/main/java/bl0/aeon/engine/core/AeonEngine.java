@@ -1,6 +1,7 @@
 package bl0.aeon.engine.core;
 
 import bl0.aeon.base.component.interfaces.InputConsumerComponent;
+import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
 import bl0.aeon.base.interfaces.IInputConsumer;
 import bl0.aeon.base.scene.IComponentContainer;
 import bl0.aeon.base.component.graphic.Material;
@@ -14,7 +15,8 @@ import bl0.aeon.base.stage.IDispatcher;
 import bl0.aeon.base.stage.Stage;
 import bl0.aeon.engine.Dispatcher;
 import bl0.aeon.engine.ResourceManager;
-import bl0.aeon.engine.data.RenderObj;
+import bl0.aeon.engine.data.render.InstancedRenderObj;
+import bl0.aeon.engine.data.render.RenderObj;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.scene.BaseScene;
@@ -24,6 +26,7 @@ import bl0.aeon.render.common.core.IResourceFabric;
 import bl0.aeon.render.common.core.IResourceManager;
 import bl0.aeon.render.common.core.RenderEngine;
 import bl0.aeon.render.common.core.RenderFrame;
+import bl0.aeon.render.common.data.input.Key;
 import bl0.aeon.render.common.data.light.DirectionalLight;
 import bl0.aeon.render.common.data.light.PointLight;
 import bl0.aeon.render.common.data.render.IRenderable;
@@ -47,6 +50,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private final FrameContext fCtx = new FrameContext();
     private double lastTime = 0;
+    private boolean isRunning = true;
 
     public AeonEngine(IContext ctx, RenderEngine renderEngine) {
         super(ctx);
@@ -75,6 +79,9 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
       var textureSolid = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_solid", ShaderPrograms.TEXTURED_COLOR_SOLID);
       resourceManager.registerResource(textureSolid);
+
+      var instancedTextureSolid = resourceFabric.loadShaderProgramFromResourcePath("shaders/instanced_texture_solid", ShaderPrograms.INSTANCED_TEXTURED_COLOR_SOLID);
+      resourceManager.registerResource(instancedTextureSolid);
     }
 
     public void start(){
@@ -84,7 +91,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private void cycle(){
         lastTime = renderEngine.getTime();
 
-        while (true) {
+        while (isRunning) {
             renderEngine.pollEvents();
             double now = renderEngine.getTime();
             fCtx.deltaTime = now - lastTime;
@@ -110,6 +117,14 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private void onKeyUpdate(){
         var input = renderEngine.pollInputData();
         if(input == null) return;
+
+        if(input.isKeyDown(Key.ESCAPE)) {
+            dispatcher.dispatch(Stage.AFTER_SCENE_RENDER, (c)->{
+                renderEngine.terminate();
+                isRunning = false;
+            });
+        }
+
         // TODO need to stop on first onInput() == true but not sure if it helps.
         for (SceneObject so : scene.getSceneObjects()) {
             if (so instanceof IComponentContainer c) {
@@ -153,17 +168,31 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             Transform transform = c.getComponent(Transform.class);
             Model model = c.getComponent(Model.class);
             Material material = c.getComponent(Material.class);
+            InstancesContainerComponent icc = c.getComponent(InstancesContainerComponent.class);
 
-            if (transform == null || model == null || material == null) continue;
+            if ((transform == null && icc == null) || model == null || material == null) continue;
 
-            RenderObj obj = new RenderObj(
+            IRenderable obj = null;
+
+            if(icc != null) {
+                obj = new InstancedRenderObj(
+                        material,
+                        icc,
+                        model.getMesh(),
+                        directionalLight,
+                        pointLights,
+                        material.isDepthTestEnabled()
+                );
+            } else
+                 obj = new RenderObj(
                     material.getShaderProgram(),
                     material.getColor(),
                     model.getMesh(),
                     transform.getMatrix(),
                     directionalLight,
                     pointLights,
-                    material.getTexture()
+                    material.getTexture(),
+                    material.isDepthTestEnabled()
             );
 
             prepared.add(obj);

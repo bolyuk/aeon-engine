@@ -11,6 +11,7 @@ public class AE_Material extends BaseComponent implements Material {
     private ShaderProgram shaderProgram;
     private Vector4f color = Colors.WHITE;
     private Texture texture;
+    private boolean isDepthTest = true;
 
     @Override
     public void setColor(Vector4f color) {
@@ -43,6 +44,16 @@ public class AE_Material extends BaseComponent implements Material {
     @Override
     public Texture getTexture() {
         return texture;
+    }
+
+    @Override
+    public boolean isDepthTestEnabled() {
+        return isDepthTest;
+    }
+
+    @Override
+    public void setDepthTestEnabled(boolean enabled) {
+        isDepthTest = enabled;
     }
 }
 

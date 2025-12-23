@@ -16,6 +16,7 @@
         <module>engine-common</module>
         <module>test</module>
         <module>aeon-framework</module>
+        <module>aeon-physic</module>
     </modules>
 
     <properties>
