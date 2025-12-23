@@ -12,6 +12,11 @@ public class Main {
 
         AeonEngine engine = new AeonEngine(ctx, new GLEngine(ctx));
         engine.initialize("AEON TEST", 800, 500);
+        engine.loadDefaultResources();
+
+        var texture = engine.getResourceFabric().loadTextureFromResourcePath("pixel-spaceship.png", "pixel-spaceship");
+        engine.getResourceManager().registerResource(texture);
+
         engine.setScene(new CubeTestScene());
         engine.start();
     }

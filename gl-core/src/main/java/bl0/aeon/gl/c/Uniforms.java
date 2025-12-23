@@ -1,7 +1,8 @@
 package bl0.aeon.gl.c;
 
 public final class Uniforms {
-    public static final String TEXTURE = "texture";
+    public static final String TEXTURE = "uTexture0";
+    public static final String USE_TEXTURE = "useTexture";
     public static final String COLOR = "color";
     public static final String MODEL = "model";
     public static final String POSITION = "position";

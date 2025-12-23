@@ -11,4 +11,8 @@ public interface RenderEngine {
     IResourceFabric getFabric();
 
     void bindContext();
+
+    void pollEvents();
+
+    void swapBuffers();
 }

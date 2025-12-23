@@ -32,7 +32,7 @@ public class Entity extends SceneObject implements IComponentContainer, IUpdateC
 
     @Override
     public <T extends Component> T getComponent(Class<T> type) {
-        return components.stream().filter(x -> type.isAssignableFrom(x.getClass())).map(x -> (T)x).findFirst().orElseThrow();
+        return components.stream().filter(x -> type.isAssignableFrom(x.getClass())).map(x -> (T)x).findFirst().orElse(null);
     }
 
     @Override

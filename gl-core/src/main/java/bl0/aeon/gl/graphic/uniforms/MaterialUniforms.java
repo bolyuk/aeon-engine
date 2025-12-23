@@ -6,6 +6,7 @@ import bl0.aeon.render.common.data.render.IRenderable;
 
 public class MaterialUniforms {
     public static void setUniforms(IRenderable obj, GLShaderProgram shaderProgram) {
-        shaderProgram.setUniform(Uniforms.COLOR, obj.getColor());
+        if(obj.getColor() != null)
+            shaderProgram.setUniform(Uniforms.COLOR, obj.getColor());
     }
 }

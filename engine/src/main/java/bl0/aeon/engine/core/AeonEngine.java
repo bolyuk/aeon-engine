@@ -16,6 +16,8 @@ import bl0.aeon.engine.data.RenderObj;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.scene.BaseScene;
+import bl0.aeon.render.common.c.resources.ShaderPrograms;
+import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.core.IResourceFabric;
 import bl0.aeon.render.common.core.IResourceManager;
 import bl0.aeon.render.common.core.RenderEngine;
@@ -38,7 +40,6 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private final IResourceFabric resourceFabric;
 
     private final Dispatcher dispatcher;
-    private IAsyncController threadController;
     private Scene scene;
 
     private final Object lock = new Object();
@@ -58,37 +59,43 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         renderEngine.initialize(title, w, h);
         fCtx.height = h;
         fCtx.width = w;
+        renderEngine.bindContext();
+    }
+
+    public void loadDefaultResources(){
+      var errTexture = resourceFabric.loadTextureFromResourcePath("textures/error-texture.png", Textures.ERROR);
+      resourceManager.registerResource(errTexture);
+
+      var shadowShader = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_shadow", ShaderPrograms.SOLID_COLOR_SHADOW);
+      resourceManager.registerResource(shadowShader);
     }
 
     public void start(){
-        threadController = ctx.getAsyncBus().register(this::cycle);
+        cycle(); //TODO
     }
 
-    public void stop(){
-        threadController.interrupt(true);
-    }
+    private void cycle(){
+        lastTime = renderEngine.getTime();
 
-    public void cycle(){
-        renderEngine.bindContext();
+        while (true) {
+            renderEngine.pollEvents();
+            double now = renderEngine.getTime();
+            fCtx.deltaTime = now - lastTime;
 
-        while (threadController.isRunning()) {
             synchronized (lock) {
                 try {
-                double now = renderEngine.getTime();
-                fCtx.deltaTime = now - lastTime;
-
-                dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
-                onUpdate();
-                dispatcher.fire(Stage.AFTER_SCENE_UPDATE, this);
-                dispatcher.fire(Stage.BEFORE_SCENE_RENDER, this);
-                onRender();
-                dispatcher.fire(Stage.AFTER_SCENE_RENDER, this);
-
-                lastTime = now;
+                    dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
+                    onUpdate();
+                    dispatcher.fire(Stage.AFTER_SCENE_UPDATE, this);
+                    dispatcher.fire(Stage.BEFORE_SCENE_RENDER, this);
+                    onRender();
+                    dispatcher.fire(Stage.AFTER_SCENE_RENDER, this);
                 } catch (Exception e) {
                     l.err(e);
                 }
             }
+            lastTime = now;
+            renderEngine.swapBuffers();
         }
     }
 
@@ -132,7 +139,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                     model.getMesh(),
                     transform.getMatrix(),
                     directionalLight,
-                    pointLights
+                    pointLights,
+                    material.getTexture()
             );
 
             prepared.add(obj);

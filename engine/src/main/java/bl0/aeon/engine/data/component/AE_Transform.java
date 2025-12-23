@@ -14,19 +14,29 @@ public class AE_Transform extends BaseComponent implements Transform {
     public final NotifyObject<Quaternionf> rotation = new NotifyObject<Quaternionf>(new Quaternionf());
     public final BoundObject<Matrix4f> matrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> new Matrix4f().translate(this.position.get()).rotate(this.rotation.get()).scale(this.scale.get()), this.position, this.rotation, this.scale);
 
-    public AE_Transform setPos(Vector3f pos) {
-        this.position.set(pos);
-        return this;
-    }
-
-    public AE_Transform setScale(Vector3f scale) {
-        this.scale.set(scale);
-        return this;
-    }
-
     @Override
     public Matrix4f getMatrix(){
         return this.matrix.get();
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return position.get();
+    }
+
+    @Override
+    public Quaternionf getRotation() {
+        return rotation.get();
+    }
+
+    @Override
+    public void setRotation(Quaternionf q) {
+        rotation.set(q);
+    }
+
+    @Override
+    public void setPosition(Vector3f pos) {
+        position.set(pos);
     }
 }
 

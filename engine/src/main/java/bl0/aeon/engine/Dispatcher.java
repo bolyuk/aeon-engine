@@ -22,10 +22,10 @@ public class Dispatcher implements IDispatcher {
             return;
         try {
             controller.invoke(ctx);
-            controller.clear();
         } catch(Exception e) {
             ctx.getDefaultLogger().err(stage+" err: "+e.getMessage());
+        }  finally {
+            controller.clear();
         }
-
     }
 }

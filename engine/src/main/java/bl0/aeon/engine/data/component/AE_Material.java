@@ -1,13 +1,16 @@
 package bl0.aeon.engine.data.component;
 
 import bl0.aeon.base.component.graphic.Material;
+import bl0.aeon.render.common.c.Colors;
 import bl0.aeon.render.common.resource.IResource;
 import bl0.aeon.render.common.resource.ShaderProgram;
+import bl0.aeon.render.common.resource.Texture;
 import org.joml.Vector4f;
 
 public class AE_Material extends BaseComponent implements Material {
     private ShaderProgram shaderProgram;
-    private Vector4f color;
+    private Vector4f color = Colors.WHITE;
+    private Texture texture;
 
     @Override
     public void setColor(Vector4f color) {
@@ -23,6 +26,11 @@ public class AE_Material extends BaseComponent implements Material {
     }
 
     @Override
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    @Override
     public ShaderProgram getShaderProgram() {
         return shaderProgram;
     }
@@ -30,6 +38,11 @@ public class AE_Material extends BaseComponent implements Material {
     @Override
     public Vector4f getColor() {
         return color;
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
     }
 }
 

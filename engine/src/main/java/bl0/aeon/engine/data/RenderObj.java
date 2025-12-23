@@ -5,6 +5,7 @@ import bl0.aeon.render.common.data.light.PointLight;
 import bl0.aeon.render.common.data.render.IRenderable;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.render.common.resource.ShaderProgram;
+import bl0.aeon.render.common.resource.Texture;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -18,19 +19,21 @@ public class RenderObj implements IRenderable {
     private final DirectionalLight directionalLight;
     private final List<PointLight> pointLights;
     private final Mesh mesh;
+    private final Texture texture;
 
     public  RenderObj(ShaderProgram shaderProgram,
                       Vector4f color,
                       Mesh mesh,
                       Matrix4f transform,
                       DirectionalLight directionalLight,
-                      List<PointLight> pointLights) {
+                      List<PointLight> pointLights, Texture texture) {
         this.shaderProgram = shaderProgram;
         this.transform = transform;
         this.color = color;
         this.mesh = mesh;
         this.directionalLight = directionalLight;
         this.pointLights = pointLights;
+        this.texture = texture;
     }
 
     @Override
@@ -41,6 +44,11 @@ public class RenderObj implements IRenderable {
     @Override
     public Vector4f getColor() {
         return color;
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override

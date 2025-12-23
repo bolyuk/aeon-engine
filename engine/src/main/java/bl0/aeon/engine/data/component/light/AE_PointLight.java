@@ -54,8 +54,8 @@ public class AE_PointLight extends BaseComponent implements PointLight {
 
     @Override
     public Vector3f getPosition() {
-        if(parent != null && parent.hasComponent(AE_Transform.class))
-            return parent.getComponent(AE_Transform.class).position.get();
+        if(parent != null && parent.hasComponent(Transform.class))
+            return parent.getComponent(Transform.class).getPosition();
         return null;
     }
 }
