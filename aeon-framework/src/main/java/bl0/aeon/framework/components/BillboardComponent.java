@@ -1,6 +1,6 @@
 package bl0.aeon.framework.components;
 
-import bl0.aeon.base.component.UpdatableComponent;
+import bl0.aeon.base.component.interfaces.UpdateConsumerComponent;
 import bl0.aeon.base.component.graphic.Transform;
 import bl0.aeon.base.core.IEngineContext;
 import bl0.aeon.base.core.IFrameContext;
@@ -8,7 +8,7 @@ import bl0.aeon.engine.data.component.BaseComponent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class BillboardComponent extends BaseComponent implements UpdatableComponent {
+public class BillboardComponent extends BaseComponent implements UpdateConsumerComponent {
 
     private static final Quaternionf CORRECTION =
             new Quaternionf().rotateX((float) Math.toRadians(-90));

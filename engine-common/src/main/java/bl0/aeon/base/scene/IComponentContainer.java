@@ -1,4 +1,6 @@
-package bl0.aeon.base.component;
+package bl0.aeon.base.scene;
+
+import bl0.aeon.base.component.Component;
 
 import java.util.List;
 

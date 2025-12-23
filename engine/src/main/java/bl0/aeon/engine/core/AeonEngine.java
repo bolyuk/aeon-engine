@@ -1,6 +1,6 @@
 package bl0.aeon.engine.core;
 
-import bl0.aeon.base.component.IComponentContainer;
+import bl0.aeon.base.scene.IComponentContainer;
 import bl0.aeon.base.component.graphic.Material;
 import bl0.aeon.base.component.graphic.Model;
 import bl0.aeon.base.component.graphic.Transform;
@@ -25,7 +25,6 @@ import bl0.aeon.render.common.core.RenderFrame;
 import bl0.aeon.render.common.data.light.DirectionalLight;
 import bl0.aeon.render.common.data.light.PointLight;
 import bl0.aeon.render.common.data.render.IRenderable;
-import bl0.bjs.common.async.control.IAsyncController;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
 import bl0.bjs.logging.ILogger;

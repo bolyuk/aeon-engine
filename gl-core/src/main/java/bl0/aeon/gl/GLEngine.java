@@ -7,15 +7,15 @@ import bl0.aeon.gl.graphic.uniforms.*;
 import bl0.aeon.render.common.core.IResourceFabric;
 import bl0.aeon.render.common.core.RenderEngine;
 import bl0.aeon.render.common.core.RenderFrame;
+import bl0.aeon.render.common.data.input.InputData;
 import bl0.aeon.render.common.data.render.IRenderable;
 import bl0.aeon.render.common.resource.IDisposable;
 import bl0.aeon.gl.base.CoreException;
 import bl0.aeon.gl.graphic.Window;
-import bl0.aeon.render.common.resource.Texture;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
-import bl0.bjs.common.core.event.Action;
-import bl0.bjs.common.core.event.ActionController;
+import bl0.bjs.common.core.event.action.Action;
+import bl0.bjs.common.core.event.action.ActionController;
 import bl0.bjs.common.core.tuple.Pair;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -83,6 +83,8 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
             GL11.glViewport(0, 0, w, h);
             windowSizeChangedController.invoke(Pair.of(w, h));
         });
+
+        GLFW.glfw
 
         GLFW.glfwSwapInterval(1);
 

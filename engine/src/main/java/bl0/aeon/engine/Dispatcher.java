@@ -3,8 +3,8 @@ package bl0.aeon.engine;
 import bl0.aeon.base.core.IEngineContext;
 import bl0.aeon.base.stage.IDispatcher;
 import bl0.aeon.base.stage.Stage;
-import bl0.bjs.common.core.event.Action;
-import bl0.bjs.common.core.event.ActionController;
+import bl0.bjs.common.core.event.action.Action;
+import bl0.bjs.common.core.event.action.ActionController;
 
 import java.util.concurrent.ConcurrentHashMap;
 

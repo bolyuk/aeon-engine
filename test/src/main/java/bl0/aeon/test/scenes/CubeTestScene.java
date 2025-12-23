@@ -22,8 +22,6 @@ public class CubeTestScene extends BaseScene {
     private Entity testCube;
     private AE_Transform transform;
 
-    private AE_Transform spaceship_t;
-
     @Override
     public void onShowed(IEngineContext ctx) {
         super.onShowed(ctx);

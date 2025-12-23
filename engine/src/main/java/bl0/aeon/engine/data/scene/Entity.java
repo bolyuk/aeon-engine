@@ -1,12 +1,12 @@
 package bl0.aeon.engine.data.scene;
 
-import bl0.aeon.base.IUpdateConsumer;
+import bl0.aeon.base.interfaces.IUpdateConsumer;
 import bl0.aeon.base.component.Component;
-import bl0.aeon.base.component.UpdatableComponent;
+import bl0.aeon.base.component.interfaces.UpdateConsumerComponent;
 import bl0.aeon.base.core.IEngineContext;
 import bl0.aeon.base.core.IFrameContext;
 import bl0.aeon.base.scene.SceneObject;
-import bl0.aeon.base.component.IComponentContainer;
+import bl0.aeon.base.scene.IComponentContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class Entity extends SceneObject implements IComponentContainer, IUpdateC
 
     @Override
     public void update(IFrameContext fCtx, IEngineContext eCtx) {
-        for (UpdatableComponent component : getEveryComponent(UpdatableComponent.class)) {
+        for (UpdateConsumerComponent component : getEveryComponent(UpdateConsumerComponent.class)) {
             component.update(fCtx, eCtx);
         }
     }
