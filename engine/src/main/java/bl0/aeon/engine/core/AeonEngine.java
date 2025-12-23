@@ -110,7 +110,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                 }
             }
             lastTime = now;
-            renderEngine.swapBuffers();
+            if(isRunning)
+                renderEngine.swapBuffers();
         }
     }
 
@@ -168,23 +169,22 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             Transform transform = c.getComponent(Transform.class);
             Model model = c.getComponent(Model.class);
             Material material = c.getComponent(Material.class);
-            InstancesContainerComponent icc = c.getComponent(InstancesContainerComponent.class);
+            var iccs = c.getEveryComponent(InstancesContainerComponent.class);
 
-            if ((transform == null && icc == null) || model == null || material == null) continue;
+            if(iccs != null && !iccs.isEmpty())
+                for (var icc : iccs)
+                    prepared.add(new InstancedRenderObj(
+                            icc.getMaterial(),
+                            icc,
+                            icc.getModel().getMesh(),
+                            null,
+                            null,
+                            icc.getMaterial().isDepthTestEnabled()
+                    ));
 
-            IRenderable obj = null;
+            if (transform == null || model == null || material == null) continue;
 
-            if(icc != null) {
-                obj = new InstancedRenderObj(
-                        material,
-                        icc,
-                        model.getMesh(),
-                        directionalLight,
-                        pointLights,
-                        material.isDepthTestEnabled()
-                );
-            } else
-                 obj = new RenderObj(
+            prepared.add(new RenderObj(
                     material.getShaderProgram(),
                     material.getColor(),
                     model.getMesh(),
@@ -193,9 +193,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                     pointLights,
                     material.getTexture(),
                     material.isDepthTestEnabled()
-            );
-
-            prepared.add(obj);
+            ));
         }
 
         renderEngine.render(new RenderFrame(scene.getCamera(), prepared));

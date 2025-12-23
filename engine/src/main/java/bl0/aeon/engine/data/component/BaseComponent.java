@@ -5,6 +5,7 @@ import bl0.aeon.base.scene.IComponentContainer;
 
 public class BaseComponent implements Component {
     protected IComponentContainer parent;
+    protected boolean isEnabled = true;
 
     @Override
     public void onAdded(IComponentContainer ct) {
@@ -14,5 +15,15 @@ public class BaseComponent implements Component {
     @Override
     public void onRemoved(IComponentContainer ct) {
         parent = null;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }

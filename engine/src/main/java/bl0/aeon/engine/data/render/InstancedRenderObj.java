@@ -8,7 +8,6 @@ import bl0.aeon.render.common.data.render.IInstancedRenderable;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.render.common.resource.Texture;
-import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;

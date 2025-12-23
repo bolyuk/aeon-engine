@@ -1,5 +1,7 @@
 package bl0.aeon.engine.data.component;
 
+import bl0.aeon.base.component.graphic.Material;
+import bl0.aeon.base.component.graphic.Model;
 import bl0.aeon.base.component.graphic.Transform;
 import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
 import org.joml.Matrix4f;
@@ -13,6 +15,8 @@ public class AE_InstancedContainerComponent extends BaseComponent implements Ins
 
     private FloatBuffer matrices;
     private int instanceCount = 0;
+    private Material material;
+    private Model model;
 
     public AE_InstancedContainerComponent(int initialCapacity) {
         int cap = Math.max(1, initialCapacity);
@@ -40,6 +44,26 @@ public class AE_InstancedContainerComponent extends BaseComponent implements Ins
         view.position(0);
         view.limit(instanceCount * 16);
         return view;
+    }
+
+    @Override
+    public Material getMaterial() {
+        return material;
+    }
+
+    @Override
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    @Override
+    public Model getModel() {
+        return model;
+    }
+
+    @Override
+    public void setModel(Model model) {
+        this.model = model;
     }
 
     private void ensureCapacity(int neededInstances) {

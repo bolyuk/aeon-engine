@@ -27,17 +27,17 @@ public class Entity extends SceneObject implements IComponentContainer, IUpdateC
 
     @Override
     public <T extends Component> boolean hasComponent(Class<T> type) {
-        return components.stream().anyMatch(x -> type.isAssignableFrom(x.getClass()));
+        return components.stream().anyMatch(x -> type.isAssignableFrom(x.getClass()) && x.isEnabled());
     }
 
     @Override
     public <T extends Component> T getComponent(Class<T> type) {
-        return components.stream().filter(x -> type.isAssignableFrom(x.getClass())).map(x -> (T)x).findFirst().orElse(null);
+        return components.stream().filter(x -> type.isAssignableFrom(x.getClass()) && x.isEnabled()).map(x -> (T)x).findFirst().orElse(null);
     }
 
     @Override
     public <T extends Component> List<T> getEveryComponent(Class<T> type) {
-        return components.stream().filter(x -> type.isAssignableFrom(x.getClass())).map(x -> (T)x).toList();
+        return components.stream().filter(x -> type.isAssignableFrom(x.getClass()) && x.isEnabled()).map(x -> (T)x).toList();
     }
 
     @Override
