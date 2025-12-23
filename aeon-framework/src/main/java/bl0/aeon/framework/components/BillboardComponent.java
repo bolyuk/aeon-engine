@@ -12,22 +12,34 @@ public class BillboardComponent extends BaseComponent implements UpdateConsumerC
 
     private static final Quaternionf CORRECTION =
             new Quaternionf().rotateX((float) Math.toRadians(-90));
+    private boolean needToBeDeleted = false;
 
     @Override
     public void update(IFrameContext fCtx, IEngineContext eCtx) {
-        if(parent == null || !parent.hasComponent(Transform.class)) return;
+        if (parent == null || !parent.hasComponent(Transform.class)) return;
 
-        var transform = parent.getComponent(Transform.class);
+        var t = parent.getComponent(Transform.class);
 
-        var camPos = eCtx.getScene().getCamera().getPosition();
-        var objPos = transform.getPosition();
+        Vector3f camPos = eCtx.getScene().getCamera().getPosition();
+        Vector3f objPos = t.getPosition();
 
-        Vector3f dir = new Vector3f(camPos).sub(objPos).normalize();
+        Vector3f toCam = new Vector3f(camPos).sub(objPos);
+        toCam.y = t.getRotation().y;
 
-        Quaternionf q = new Quaternionf()
-                .lookAlong(dir.negate(), new Vector3f(0, 1, 0))
-                .mul(CORRECTION);
+        if (toCam.lengthSquared() < 1e-8f) return;
+        toCam.normalize();
 
-        transform.setRotation(q);
+        float yaw = (float) Math.atan2(toCam.x, toCam.z);
+
+        Quaternionf q = new Quaternionf().rotateY(yaw).mul(CORRECTION);
+        t.setRotation(q);
+
+        if(needToBeDeleted)
+            parent.removeComponent(this);
+    }
+
+    public BillboardComponent applyOnceAndRemove(){
+        needToBeDeleted = true;
+        return this;
     }
 }

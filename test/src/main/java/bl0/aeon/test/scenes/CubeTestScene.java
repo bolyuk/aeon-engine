@@ -76,19 +76,5 @@ public class CubeTestScene extends BaseScene {
         Entity directionalLight = new Entity("DirectionalLight");
         directionalLight.addComponent((Component) LightFabric.createDirectionalLight());
         add(directionalLight);
-
-        Entity spaceship = new Entity("Spaceship");
-        spaceship.addComponent(new AE_Transform());
-
-        var s_model = new AE_Model();
-        s_model.setMesh(ctx.getResourceFabric().createPlane("M_Spaceship"));
-        spaceship.addComponent(s_model);
-
-        var s_material = new AE_Material();
-        s_material.setTexture(ctx.getResourceManager().getResource("pixel-spaceship", Texture.class));
-        s_material.setShaderProgram(ctx.getResourceManager().getResource(ShaderPrograms.SOLID_COLOR_SHADOW));
-        spaceship.addComponent(s_material);
-        spaceship.addComponent(new BillboardComponent());
-        add(spaceship);
     }
 }

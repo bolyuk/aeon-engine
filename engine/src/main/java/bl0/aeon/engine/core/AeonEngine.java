@@ -109,9 +109,9 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             if (so instanceof IComponentContainer c) {
                var consumersList = c.getEveryComponent(InputConsumerComponent.class);
                for (var consumer : consumersList)
-                   consumer.onInput(input);
+                   consumer.onInput(input, this);
             } else if(so instanceof IInputConsumer ic){
-                ic.onInput(input);
+                ic.onInput(input, this);
             }
         }
     }
