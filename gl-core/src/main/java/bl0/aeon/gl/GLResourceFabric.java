@@ -108,53 +108,8 @@ public class GLResourceFabric implements IResourceFabric {
     }
 
     @Override
-    public Mesh createSphere(int sectorCount, int stackCount, float radius, String name) {
-        ArrayList<Float> vertexData = new ArrayList<Float>();
-        for (int i = 0; i < stackCount; ++i) {
-            float stackAngle1 = 1.5707964f - (float)i * (float)Math.PI / (float)stackCount;
-            float stackAngle2 = 1.5707964f - (float)(i + 1) * (float)Math.PI / (float)stackCount;
-            float z1 = radius * (float)Math.sin(stackAngle1);
-            float z2 = radius * (float)Math.sin(stackAngle2);
-            float r1 = radius * (float)Math.cos(stackAngle1);
-            float r2 = radius * (float)Math.cos(stackAngle2);
-            for (int j = 0; j <= sectorCount; ++j) {
-                float sectorAngleNext;
-                float sectorAngle = (float)(Math.PI * 2 * (double)j / (double)sectorCount);
-                float x1 = r1 * (float)Math.cos(sectorAngle);
-                float y1 = r1 * (float)Math.sin(sectorAngle);
-                float x2 = r2 * (float)Math.cos(sectorAngle);
-                float y2 = r2 * (float)Math.sin(sectorAngle);
-                if (i != 0) {
-                    GLResourceFabric.addVertex(vertexData, x1, y1, z1);
-                    GLResourceFabric.addNormal(vertexData, x1, y1, z1);
-                    GLResourceFabric.addVertex(vertexData, x2, y2, z2);
-                    GLResourceFabric.addNormal(vertexData, x2, y2, z2);
-                    sectorAngleNext = (float)(Math.PI * 2 * (double)(j + 1) / (double)sectorCount);
-                    float x1n = r1 * (float)Math.cos(sectorAngleNext);
-                    float y1n = r1 * (float)Math.sin(sectorAngleNext);
-                    GLResourceFabric.addVertex(vertexData, x1n, y1n, z1);
-                    GLResourceFabric.addNormal(vertexData, x1n, y1n, z1);
-                }
-                if (i == stackCount - 1) continue;
-                sectorAngleNext = (float)(Math.PI * 2 * (double)(j + 1) / (double)sectorCount);
-                float x2n = r2 * (float)Math.cos(sectorAngleNext);
-                float y2n = r2 * (float)Math.sin(sectorAngleNext);
-                float x1n = r1 * (float)Math.cos(sectorAngleNext);
-                float y1n = r1 * (float)Math.sin(sectorAngleNext);
-                GLResourceFabric.addVertex(vertexData, x1n, y1n, z1);
-                GLResourceFabric.addNormal(vertexData, x1n, y1n, z1);
-                GLResourceFabric.addVertex(vertexData, x2, y2, z2);
-                GLResourceFabric.addNormal(vertexData, x2, y2, z2);
-                GLResourceFabric.addVertex(vertexData, x2n, y2n, z2);
-                GLResourceFabric.addNormal(vertexData, x2n, y2n, z2);
-            }
-        }
-        float[] vertices = new float[vertexData.size()];
-        for (int i = 0; i < vertexData.size(); ++i) {
-            vertices[i] = ((Float)vertexData.get(i)).floatValue();
-        }
-        List<VertexAttribute> attr = List.of(new VertexAttribute(3), new VertexAttribute(3), new VertexAttribute(2));
-        return new GLMesh(vertices, attr, name);
+    public Texture createTextureFromRGBABuffer(ByteBuffer buffer, int width, int height, String name) {
+        return new GLTexture(name, width, height, buffer);
     }
 
     @Override
@@ -236,6 +191,158 @@ public class GLResourceFabric implements IResourceFabric {
         } catch (Exception e) {
             throw new RuntimeException("Failed to read resource: " + path, e);
         }
+    }
+
+    public Mesh createSphereSmooth(int sectorCount, int stackCount, float radius, String name) {
+        ArrayList<Float> vertexData = new ArrayList<>();
+
+        for (int i = 0; i < stackCount; ++i) {
+            float stackAngle1 = 1.5707964f - (float) i * (float) Math.PI / (float) stackCount;
+            float stackAngle2 = 1.5707964f - (float) (i + 1) * (float) Math.PI / (float) stackCount;
+
+            float z1 = radius * (float) Math.sin(stackAngle1);
+            float z2 = radius * (float) Math.sin(stackAngle2);
+            float r1 = radius * (float) Math.cos(stackAngle1);
+            float r2 = radius * (float) Math.cos(stackAngle2);
+
+            for (int j = 0; j <= sectorCount; ++j) {
+                float sectorAngle = (float) (Math.PI * 2.0 * (double) j / (double) sectorCount);
+                float sectorAngleNext = (float) (Math.PI * 2.0 * (double) (j + 1) / (double) sectorCount);
+
+                float x1 = r1 * (float) Math.cos(sectorAngle);
+                float y1 = r1 * (float) Math.sin(sectorAngle);
+                float x2 = r2 * (float) Math.cos(sectorAngle);
+                float y2 = r2 * (float) Math.sin(sectorAngle);
+
+                float x1n = r1 * (float) Math.cos(sectorAngleNext);
+                float y1n = r1 * (float) Math.sin(sectorAngleNext);
+                float x2n = r2 * (float) Math.cos(sectorAngleNext);
+                float y2n = r2 * (float) Math.sin(sectorAngleNext);
+
+                // upper triangle (skip top cap)
+                if (i != 0) {
+                    addVertexNormalSmooth(vertexData, x1,  y1,  z1, radius);
+                    addVertexNormalSmooth(vertexData, x2,  y2,  z2, radius);
+                    addVertexNormalSmooth(vertexData, x1n, y1n, z1, radius);
+                }
+
+                // lower triangle (skip bottom cap)
+                if (i != stackCount - 1) {
+                    addVertexNormalSmooth(vertexData, x1n, y1n, z1, radius);
+                    addVertexNormalSmooth(vertexData, x2,  y2,  z2, radius);
+                    addVertexNormalSmooth(vertexData, x2n, y2n, z2, radius);
+                }
+            }
+        }
+
+        float[] vertices = new float[vertexData.size()];
+        for (int i = 0; i < vertexData.size(); ++i) vertices[i] = vertexData.get(i);
+
+        List<VertexAttribute> attr = List.of(new VertexAttribute(3), new VertexAttribute(3));
+        return new GLMesh(vertices, attr, name);
+    }
+
+    public Mesh createSphereLowPoly(int sectorCount, int stackCount, float radius, String name) {
+        ArrayList<Float> vertexData = new ArrayList<>();
+
+        for (int i = 0; i < stackCount; ++i) {
+            float stackAngle1 = 1.5707964f - (float) i * (float) Math.PI / (float) stackCount;
+            float stackAngle2 = 1.5707964f - (float) (i + 1) * (float) Math.PI / (float) stackCount;
+
+            float z1 = radius * (float) Math.sin(stackAngle1);
+            float z2 = radius * (float) Math.sin(stackAngle2);
+            float r1 = radius * (float) Math.cos(stackAngle1);
+            float r2 = radius * (float) Math.cos(stackAngle2);
+
+            float v1 = (float) i / (float) stackCount;
+            float v2 = (float) (i + 1) / (float) stackCount;
+
+            for (int j = 0; j <= sectorCount; ++j) {
+                float sectorAngle = (float) (Math.PI * 2.0 * (double) j / (double) sectorCount);
+                float sectorAngleNext = (float) (Math.PI * 2.0 * (double) (j + 1) / (double) sectorCount);
+
+                float x1 = r1 * (float) Math.cos(sectorAngle);
+                float y1 = r1 * (float) Math.sin(sectorAngle);
+                float x2 = r2 * (float) Math.cos(sectorAngle);
+                float y2 = r2 * (float) Math.sin(sectorAngle);
+
+                float x1n = r1 * (float) Math.cos(sectorAngleNext);
+                float y1n = r1 * (float) Math.sin(sectorAngleNext);
+                float x2n = r2 * (float) Math.cos(sectorAngleNext);
+                float y2n = r2 * (float) Math.sin(sectorAngleNext);
+
+                float u  = (float) j / (float) sectorCount;
+                float uN = (float) (j + 1) / (float) sectorCount;
+
+                // upper triangle (skip top cap)
+                if (i != 0) {
+                    addTriFlatPNUV(vertexData,
+                            x1,  y1,  z1,  u,  v1,
+                            x2,  y2,  z2,  u,  v2,
+                            x1n, y1n, z1,  uN, v1
+                    );
+                }
+
+                // lower triangle (skip bottom cap)
+                if (i != stackCount - 1) {
+                    addTriFlatPNUV(vertexData,
+                            x1n, y1n, z1,  uN, v1,
+                            x2,  y2,  z2,  u,  v2,
+                            x2n, y2n, z2,  uN, v2
+                    );
+                }
+            }
+        }
+
+        float[] vertices = new float[vertexData.size()];
+        for (int i = 0; i < vertexData.size(); ++i) vertices[i] = vertexData.get(i);
+
+        List<VertexAttribute> attr = List.of(
+                new VertexAttribute(3), // position
+                new VertexAttribute(3), // normal
+                new VertexAttribute(2)  // uv
+        );
+        return new GLMesh(vertices, attr, name);
+    }
+
+    private static void addTriFlatPNUV(
+            ArrayList<Float> out,
+            float ax, float ay, float az, float au, float av,
+            float bx, float by, float bz, float bu, float bv,
+            float cx, float cy, float cz, float cu, float cv
+    ) {
+        // face normal = normalize((b-a) x (c-a))
+        float abx = bx - ax, aby = by - ay, abz = bz - az;
+        float acx = cx - ax, acy = cy - ay, acz = cz - az;
+
+        float nx = aby * acz - abz * acy;
+        float ny = abz * acx - abx * acz;
+        float nz = abx * acy - aby * acx;
+
+        float len = (float) Math.sqrt(nx * nx + ny * ny + nz * nz);
+        if (len != 0f) { nx /= len; ny /= len; nz /= len; }
+
+        addVertexPNUV(out, ax, ay, az, nx, ny, nz, au, av);
+        addVertexPNUV(out, bx, by, bz, nx, ny, nz, bu, bv);
+        addVertexPNUV(out, cx, cy, cz, nx, ny, nz, cu, cv);
+    }
+
+    private static void addVertexPNUV(
+            ArrayList<Float> out,
+            float x, float y, float z,
+            float nx, float ny, float nz,
+            float u, float v
+    ) {
+        out.add(x);  out.add(y);  out.add(z);
+        out.add(nx); out.add(ny); out.add(nz);
+        out.add(u);  out.add(v);
+    }
+
+    private static void addVertexNormalSmooth(ArrayList<Float> out,
+                                              float x, float y, float z, float radius) {
+        GLResourceFabric.addVertex(out, x, y, z);
+        float inv = 1.0f / radius;
+        GLResourceFabric.addNormal(out, x * inv, y * inv, z * inv);
     }
 }
 

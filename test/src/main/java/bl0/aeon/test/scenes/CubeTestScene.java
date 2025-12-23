@@ -6,12 +6,9 @@ import bl0.aeon.base.stage.Stage;
 import bl0.aeon.engine.data.component.AE_Material;
 import bl0.aeon.engine.data.component.AE_Model;
 import bl0.aeon.engine.data.component.AE_Transform;
-import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.fabrics.LightFabric;
 import bl0.aeon.engine.scene.BaseScene;
-import bl0.aeon.framework.components.BillboardComponent;
-import bl0.aeon.render.common.c.Colors;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.resource.Texture;
@@ -68,7 +65,7 @@ public class CubeTestScene extends BaseScene {
 
         AE_Material material = new AE_Material();
         material.setTexture(ctx.getResourceManager().getResource(Textures.ERROR, Texture.class));
-        material.setShaderProgram(ctx.getResourceManager().getResource(ShaderPrograms.SOLID_COLOR_SHADOW));
+        material.setShaderProgram(ctx.getResourceManager().getResource(ShaderPrograms.TEXTURED_COLOR_SHADOW));
         testCube.addComponent(material);
 
         add(testCube);

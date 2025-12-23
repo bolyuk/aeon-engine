@@ -25,7 +25,6 @@ public class AE_Camera implements Camera {
                     e -> new Matrix4f().perspective((float) Math.toRadians(this.fov.get()),
                             this.aspectRatio.get(), 0.1f, 1000.0f),
                     this.aspectRatio, this.fov);
-
     @Override
     public Matrix4f getViewMatrix() {
         return viewMatrix.get();
@@ -39,6 +38,11 @@ public class AE_Camera implements Camera {
     @Override
     public Vector3f getPosition() {
         return position.get();
+    }
+
+    @Override
+    public void setPosition(Vector3f position) {
+        this.position.set(position);
     }
 }
 

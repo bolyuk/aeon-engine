@@ -67,8 +67,14 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
       var errTexture = resourceFabric.loadTextureFromResourcePath("textures/error-texture.png", Textures.ERROR);
       resourceManager.registerResource(errTexture);
 
-      var shadowShader = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_shadow", ShaderPrograms.SOLID_COLOR_SHADOW);
+      var shadowShader = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_shadow", ShaderPrograms.TEXTURED_COLOR_SHADOW);
       resourceManager.registerResource(shadowShader);
+
+      var solidColorShader = resourceFabric.loadShaderProgramFromResourcePath("shaders/color_solid", ShaderPrograms.COLOR_SOLID);
+      resourceManager.registerResource(solidColorShader);
+
+      var textureSolid = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_solid", ShaderPrograms.TEXTURED_COLOR_SOLID);
+      resourceManager.registerResource(textureSolid);
     }
 
     public void start(){

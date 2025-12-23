@@ -15,7 +15,11 @@ public interface IResourceFabric {
 
     Mesh createPlane(String name);
 
-    Mesh createSphere(int sectorCount, int stackCount, float radius, String name);
+    Mesh createSphereSmooth(int sectorCount, int stackCount, float radius, String name);
+
+    public Mesh createSphereLowPoly(int sectorCount, int stackCount, float radius, String name);
+
+    Texture createTextureFromRGBABuffer(ByteBuffer buffer, int width, int height, String name);
 
     Texture loadTextureFromPath(String path, String name);
 
