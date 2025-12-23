@@ -5,6 +5,8 @@ public enum Key {
     S,
     A,
     D,
+    Q,
+    E,
     ESCAPE,
     SPACE,
     ENTER,

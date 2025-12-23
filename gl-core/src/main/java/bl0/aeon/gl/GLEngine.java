@@ -1,5 +1,6 @@
 package bl0.aeon.gl;
 
+import bl0.aeon.gl.data.GLInputData;
 import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
@@ -8,6 +9,7 @@ import bl0.aeon.render.common.core.IResourceFabric;
 import bl0.aeon.render.common.core.RenderEngine;
 import bl0.aeon.render.common.core.RenderFrame;
 import bl0.aeon.render.common.data.input.InputData;
+import bl0.aeon.render.common.data.input.Key;
 import bl0.aeon.render.common.data.render.IRenderable;
 import bl0.aeon.render.common.resource.IDisposable;
 import bl0.aeon.gl.base.CoreException;
@@ -30,6 +32,8 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
     private Window window;
 
     private boolean contextBound = false;
+
+    private GLInputData lastInput = new GLInputData();
 
     public GLEngine(IContext ctx) {
         super(ctx);
@@ -84,8 +88,6 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
             windowSizeChangedController.invoke(Pair.of(w, h));
         });
 
-        GLFW.glfw
-
         GLFW.glfwSwapInterval(1);
 
         contextBound = true;
@@ -99,6 +101,54 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
     @Override
     public void swapBuffers() {
         GLFW.glfwSwapBuffers(window.ID);
+    }
+
+    @Override
+    public InputData pollInputData() {
+        GLInputData input = new GLInputData();
+
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_W))
+            input.keys.add(Key.W);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_A))
+            input.keys.add(Key.A);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_S))
+            input.keys.add(Key.S);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_D))
+            input.keys.add(Key.D);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_ESCAPE))
+            input.keys.add(Key.ESCAPE);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_SPACE))
+            input.keys.add(Key.SPACE);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_BACKSPACE))
+            input.keys.add(Key.BACKSPACE);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_ENTER))
+            input.keys.add(Key.ENTER);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_Q))
+            input.keys.add(Key.Q);
+        /// >.<
+        if(isPressed(GLFW.GLFW_KEY_E))
+            input.keys.add(Key.E);
+
+        lastInput = input;
+        return input.isAnyDown() ? input : null;
+    }
+
+    @Override
+    public void captureCursor(boolean flag) {
+        GLFW.glfwSetInputMode(window.ID, GLFW.GLFW_CURSOR, flag ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR);
+    }
+
+    private boolean isPressed(int key){
+        return GLFW.glfwGetKey(window.ID, key) == GLFW.GLFW_PRESS;
     }
 
     @Override

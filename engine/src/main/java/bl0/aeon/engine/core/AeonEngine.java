@@ -1,5 +1,7 @@
 package bl0.aeon.engine.core;
 
+import bl0.aeon.base.component.interfaces.InputConsumerComponent;
+import bl0.aeon.base.interfaces.IInputConsumer;
 import bl0.aeon.base.scene.IComponentContainer;
 import bl0.aeon.base.component.graphic.Material;
 import bl0.aeon.base.component.graphic.Model;
@@ -83,6 +85,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
             synchronized (lock) {
                 try {
+                    onKeyUpdate(); // but not sure if it is the right place.
                     dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
                     onUpdate();
                     dispatcher.fire(Stage.AFTER_SCENE_UPDATE, this);
@@ -95,6 +98,21 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             }
             lastTime = now;
             renderEngine.swapBuffers();
+        }
+    }
+
+    private void onKeyUpdate(){
+        var input = renderEngine.pollInputData();
+        if(input == null) return;
+        // TODO need to stop on first onInput() == true but not sure if it helps.
+        for (SceneObject so : scene.getSceneObjects()) {
+            if (so instanceof IComponentContainer c) {
+               var consumersList = c.getEveryComponent(InputConsumerComponent.class);
+               for (var consumer : consumersList)
+                   consumer.onInput(input);
+            } else if(so instanceof IInputConsumer ic){
+                ic.onInput(input);
+            }
         }
     }
 
