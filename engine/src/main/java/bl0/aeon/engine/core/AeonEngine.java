@@ -126,7 +126,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             });
         }
 
-        // TODO need to stop on first onInput() == true but not sure if it helps.
+        // TODO probably need to stop on first onInput() == true but still not sure.
         for (SceneObject so : scene.getSceneObjects()) {
             if (so instanceof IComponentContainer c) {
                var consumersList = c.getEveryComponent(InputConsumerComponent.class);
