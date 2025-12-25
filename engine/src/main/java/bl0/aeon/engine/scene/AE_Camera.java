@@ -10,7 +10,6 @@ public class AE_Camera implements Camera {
     public final NotifyObject<Vector3f> position = new NotifyObject<Vector3f>(new Vector3f(0.0f, 0.0f, 5.0f));
     public final NotifyObject<Vector3f> direction = new NotifyObject<Vector3f>(new Vector3f(0.0f, 0.0f, -1.0f));
     public final NotifyObject<Vector3f> up = new NotifyObject<Vector3f>(new Vector3f(0.0f, 1.0f, 0.0f));
-    public float fov = 60.0f;
     public NotifyObject<Float> aspectRatio = new NotifyObject<Float>(1.3333334f);
 
     public BoundObject<Matrix4f> viewMatrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> {
@@ -19,9 +18,13 @@ public class AE_Camera implements Camera {
         return new Matrix4f().lookAt(this.position.get(), target, this.up.get());
     }, this.position, this.direction, this.up);
 
-    public BoundObject<Matrix4f> projectionMatrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> new Matrix4f().perspective((float)Math.toRadians(this.fov), this.aspectRatio.get().floatValue(), 0.1f, 1000.0f), this.aspectRatio);
+    public final NotifyObject<Float> fov = new NotifyObject<>(60.0f);
 
-
+    public BoundObject<Matrix4f> projectionMatrix =
+            new BoundObject<>(new Matrix4f(),
+                    e -> new Matrix4f().perspective((float) Math.toRadians(this.fov.get()),
+                            this.aspectRatio.get(), 0.1f, 1000.0f),
+                    this.aspectRatio, this.fov);
     @Override
     public Matrix4f getViewMatrix() {
         return viewMatrix.get();
@@ -35,6 +38,11 @@ public class AE_Camera implements Camera {
     @Override
     public Vector3f getPosition() {
         return position.get();
+    }
+
+    @Override
+    public void setPosition(Vector3f position) {
+        this.position.set(position);
     }
 }
 

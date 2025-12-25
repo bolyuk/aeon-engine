@@ -10,4 +10,6 @@ public interface Scene {
     List<SceneObject> getSceneObjects();
 
     Camera getCamera();
+    void add(SceneObject sceneObject);
+    void remove(SceneObject sceneObject);
 }

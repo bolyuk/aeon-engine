@@ -1,10 +1,11 @@
 package bl0.aeon.engine.data.component;
 
-import bl0.aeon.base.component.IComponentContainer;
-import bl0.aeon.common.data.component.base.Component;
+import bl0.aeon.base.component.Component;
+import bl0.aeon.base.scene.IComponentContainer;
 
 public class BaseComponent implements Component {
-    private IComponentContainer parent;
+    protected IComponentContainer parent;
+    protected boolean isEnabled = true;
 
     @Override
     public void onAdded(IComponentContainer ct) {
@@ -14,5 +15,15 @@ public class BaseComponent implements Component {
     @Override
     public void onRemoved(IComponentContainer ct) {
         parent = null;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }

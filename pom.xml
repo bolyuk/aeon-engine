@@ -8,20 +8,23 @@
     <artifactId>aeon-engine</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>gl-core</module>
         <module>gl-common</module>
         <module>engine</module>
-        <module>test</module>
         <module>engine-common</module>
+        <module>test</module>
+        <module>aeon-framework</module>
+        <module>aeon-physic</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
+
         <lwjgl.version>3.3.6</lwjgl.version>
-        <lwjgl.natives>natives-linux</lwjgl.natives>
-        <main.class>org.bl0.aeon.test.game.Main</main.class>
+        <lwjgl.natives>natives-windows</lwjgl.natives>
     </properties>
 
     <dependencyManagement>
@@ -33,110 +36,30 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- если хочешь управлять версиями joml/annotations тоже централизованно -->
+            <dependency>
+                <groupId>org.joml</groupId>
+                <artifactId>joml</artifactId>
+                <version>1.10.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>13.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
-            <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
-            <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
-            <classifier>${lwjgl.natives}</classifier><scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.joml</groupId>
-            <artifactId>joml</artifactId>
-            <version>1.10.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>13.0</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
-
     <build>
-        <plugins>
-            <!-- Компилятор с превью -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <release>${maven.compiler.release}</release>
-                    <compilerArgs>--enable-preview</compilerArgs>
-                </configuration>
-            </plugin>
-
-            <!-- Проброс превью в тесты (если есть) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <argLine>--enable-preview</argLine>
-                </configuration>
-            </plugin>
-
-            <!-- Удобный запуск через mvn exec:java -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.4.1</version>
-                <configuration>
-                    <mainClass>${main.class}</mainClass>
-                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                    <arguments></arguments>
-                    <systemProperties>
-                        <systemProperty>
-                            <key>org.lwjgl.util.Debug</key>
-                            <value>true</value>
-                        </systemProperty>
-                    </systemProperties>
-                    <commandlineArgs></commandlineArgs>
-                    <includeProjectDependencies>true</includeProjectDependencies>
-                    <includePluginDependencies>false</includePluginDependencies>
-                    <workingDirectory>${project.basedir}</workingDirectory>
-                    <executableDependency></executableDependency>
-                    <longModulepath>false</longModulepath>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals><goal>java</goal></goals>
-                        <configuration>
-                            <arguments></arguments>
-                            <systemProperties>
-                                <!-- JDK 24 предупреждения о native-access -->
-                                <systemProperty>
-                                    <key>jdk.module.illegalAccess.silent</key>
-                                    <value>true</value>
-                                </systemProperty>
-                            </systemProperties>
-                            <commandlineArgs></commandlineArgs>
-                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                            <classpathScope>runtime</classpathScope>
-                            <includeProjectDependencies>true</includeProjectDependencies>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.4.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
