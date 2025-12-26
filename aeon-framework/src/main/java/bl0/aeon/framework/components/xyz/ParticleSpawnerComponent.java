@@ -36,7 +36,7 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
     public float emissionRate = 200f;
     public int maxParticles;
     public float lifeMin = 0.3f;
-    public float lifeMax = 1.2f;
+    public float lifeMax = 0.5f;
 
     public float sizeMin = 0.03f;
     public float sizeMax = 0.12f;
@@ -47,7 +47,7 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
     public Vector3f direction = new Vector3f(0, 1, 0);
     public float spread = 0.6f;
 
-    public Vector3f gravity = new Vector3f(0, -2.0f, 0);
+    public Vector3f gravity = new Vector3f(0, -5.0f, 0);
     public float drag = 0.0f;
 
     public Vector3f localOffset = new Vector3f(0, 0, 0);
@@ -55,6 +55,8 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
     public boolean useParentRotation = true;
     public boolean rotateParticlesWithParent = false;
     public boolean gravityInLocalSpace = false;
+
+    public boolean allowGenerationNewParticles = true;
 
     private final Random rnd = new Random();
     private float emitAcc = 0f;
@@ -167,6 +169,7 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
     }
 
     private void spawn(Vector3f origin, Vector3f worldDir, Transform parentTr) {
+        if(!allowGenerationNewParticles) return;
         if (alive >= maxParticles) return;
 
         Particle p = particles[alive++];
