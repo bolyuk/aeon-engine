@@ -20,7 +20,6 @@ import bl0.aeon.engine.data.render.RenderObj;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.scene.BaseScene;
-import bl0.aeon.engine.scene.LoadingScene;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.core.IResourceFabric;
@@ -103,8 +102,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
             synchronized (lock) {
                 try {
-                    if(scene == null)
-                        scene = new LoadingScene();
+                    if(scene == null) continue;
 
                     onKeyUpdate(); // but not sure if it is the right place.
                     dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
