@@ -20,6 +20,7 @@ import bl0.aeon.engine.data.render.RenderObj;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.scene.BaseScene;
+import bl0.aeon.engine.scene.LoadingScene;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.core.IResourceFabric;
@@ -68,20 +69,24 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     }
 
     public void loadDefaultResources(){
-      var errTexture = resourceFabric.loadTextureFromResourcePath("textures/error-texture.png", Textures.ERROR);
-      resourceManager.registerResource(errTexture);
+        loadAndSaveTexture("textures/error-texture.png", Textures.ERROR);
+        loadAndSaveTexture("textures/gear-b-texture.png", Textures.GEAR_BIG);
+        loadAndSaveTexture("textures/logo-texture.png", Textures.LOGO);
 
-      var shadowShader = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_shadow", ShaderPrograms.TEXTURED_COLOR_SHADOW);
-      resourceManager.registerResource(shadowShader);
+        loadAndSaveShader("shaders/texture_shadow", ShaderPrograms.TEXTURED_COLOR_SHADOW);
+        loadAndSaveShader("shaders/color_solid", ShaderPrograms.COLOR_SOLID);
+        loadAndSaveShader("shaders/texture_solid", ShaderPrograms.TEXTURED_COLOR_SOLID);
+        loadAndSaveShader("shaders/instanced_texture_solid", ShaderPrograms.INSTANCED_TEXTURED_COLOR_SOLID);
+    }
 
-      var solidColorShader = resourceFabric.loadShaderProgramFromResourcePath("shaders/color_solid", ShaderPrograms.COLOR_SOLID);
-      resourceManager.registerResource(solidColorShader);
+    public void loadAndSaveTexture(String path, String name) {
+        var texture = resourceFabric.loadTextureFromResourcePath(path, name);
+        resourceManager.registerResource(texture);
+    }
 
-      var textureSolid = resourceFabric.loadShaderProgramFromResourcePath("shaders/texture_solid", ShaderPrograms.TEXTURED_COLOR_SOLID);
-      resourceManager.registerResource(textureSolid);
-
-      var instancedTextureSolid = resourceFabric.loadShaderProgramFromResourcePath("shaders/instanced_texture_solid", ShaderPrograms.INSTANCED_TEXTURED_COLOR_SOLID);
-      resourceManager.registerResource(instancedTextureSolid);
+    public void loadAndSaveShader(String path, String name) {
+        var shaderProgram = resourceFabric.loadShaderProgramFromResourcePath(path, name);
+        resourceManager.registerResource(shaderProgram);
     }
 
     public void start(){
@@ -98,6 +103,9 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
             synchronized (lock) {
                 try {
+                    if(scene == null)
+                        scene = new LoadingScene();
+
                     onKeyUpdate(); // but not sure if it is the right place.
                     dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
                     onUpdate();
