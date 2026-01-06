@@ -52,6 +52,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private double lastTime = 0;
     private boolean isRunning = true;
 
+    private int fpsLimit = 60;
+
     public AeonEngine(IContext ctx, RenderEngine renderEngine) {
         super(ctx);
         this.renderEngine = renderEngine;
@@ -92,34 +94,65 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         cycle(); //TODO
     }
 
-    private void cycle(){
+    private void cycle() {
         lastTime = renderEngine.getTime();
 
+        final double targetDt = 1.0 / fpsLimit;
+
         while (isRunning) {
+            double frameStart = renderEngine.getTime();
+            double dt = frameStart - lastTime;
+            lastTime = frameStart;
+
+            if (dt > 0.25) dt = 0.25;
+            fCtx.deltaTime = dt;
+
             renderEngine.pollEvents();
-            double now = renderEngine.getTime();
-            fCtx.deltaTime = now - lastTime;
 
             synchronized (lock) {
                 try {
-                    if(scene == null) continue;
-
-                    onKeyUpdate(); // but not sure if it is the right place.
-                    dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
-                    onUpdate();
-                    dispatcher.fire(Stage.AFTER_SCENE_UPDATE, this);
-                    dispatcher.fire(Stage.BEFORE_SCENE_RENDER, this);
-                    onRender();
-                    dispatcher.fire(Stage.AFTER_SCENE_RENDER, this);
+                    if (scene != null) {
+                        onKeyUpdate();
+                        dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
+                        onUpdate();
+                        dispatcher.fire(Stage.AFTER_SCENE_UPDATE, this);
+                        dispatcher.fire(Stage.BEFORE_SCENE_RENDER, this);
+                        onRender();
+                        dispatcher.fire(Stage.AFTER_SCENE_RENDER, this);
+                    }
                 } catch (Exception e) {
                     l.err(e);
                 }
             }
-            lastTime = now;
-            if(isRunning)
-                renderEngine.swapBuffers();
+
+            if (!isRunning)
+                return;
+
+            renderEngine.swapBuffers();
+
+            double frameEnd = renderEngine.getTime();
+            double frameTime = frameEnd - frameStart;
+
+            double sleepSec = targetDt - frameTime;
+            if (sleepSec > 0) {
+                sleepMillisPrecise(sleepSec);
+            }
         }
     }
+
+    private void sleepMillisPrecise(double seconds) {
+        long ms = (long) (seconds * 1000.0);
+        int ns = (int) ((seconds * 1_000_000_000.0) - (ms * 1_000_000L));
+
+        try {
+            if (ms > 0) Thread.sleep(ms);
+            if (ns > 0) Thread.sleep(0, ns);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            l.err(e);
+        }
+    }
+
 
     private void onKeyUpdate(){
         var input = renderEngine.pollInputData();
