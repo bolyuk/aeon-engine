@@ -5,6 +5,7 @@ import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
 import bl0.aeon.gl.graphic.uniforms.*;
+import bl0.aeon.gl.graphic.utils.ViewportUtil;
 import bl0.aeon.render.common.core.IResourceFabric;
 import bl0.aeon.render.common.core.RenderEngine;
 import bl0.aeon.render.common.core.RenderFrame;
@@ -152,6 +153,12 @@ public class GLEngine extends BJSBaseClass implements IDisposable, RenderEngine 
     @Override
     public void captureCursor(boolean flag) {
         GLFW.glfwSetInputMode(window.ID, GLFW.GLFW_CURSOR, flag ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR);
+    }
+
+    @Override
+    public void changeViewPort(int width, int height, float aspectRatio) {
+        int[] data = ViewportUtil.calcViewport(width, height, aspectRatio);
+        GL11.glViewport(data[0], data[1], data[2], data[3]);
     }
 
     private boolean isPressed(int key){

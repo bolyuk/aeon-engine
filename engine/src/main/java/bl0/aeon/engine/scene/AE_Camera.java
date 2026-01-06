@@ -44,5 +44,10 @@ public class AE_Camera implements Camera {
     public void setPosition(Vector3f position) {
         this.position.set(position);
     }
+
+    @Override
+    public void setAspectRatio(float aspectRatio) {
+        this.aspectRatio.set(aspectRatio);
+    }
 }
 

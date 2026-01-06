@@ -27,6 +27,8 @@ public interface RenderEngine {
 
     void captureCursor(boolean flag);
 
+    void changeViewPort(int width, int height, float aspectRatio);
+
     void setOnWindowSizeChangedListener(Action<Pair<Integer, Integer>> onWindowSizeChangedListener);
 
     void remOnWindowSizeChangedListener(Action<Pair<Integer, Integer>> onWindowSizeChangedListener);

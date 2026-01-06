@@ -1,8 +1,11 @@
 package bl0.aeon.engine.core;
 
+import bl0.aeon.base.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.base.component.interfaces.InputConsumerComponent;
 import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
+import bl0.aeon.base.events.WinSizeChangeEvent;
 import bl0.aeon.base.interfaces.IInputConsumer;
+import bl0.aeon.base.interfaces.IWindowSizeChangeConsumer;
 import bl0.aeon.base.scene.IComponentContainer;
 import bl0.aeon.base.component.graphic.Material;
 import bl0.aeon.base.component.graphic.Model;
@@ -32,6 +35,8 @@ import bl0.aeon.render.common.data.light.PointLight;
 import bl0.aeon.render.common.data.render.IRenderable;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
+import bl0.bjs.common.core.tuple.Pair;
+import bl0.bjs.eventbus.IEventBus;
 import bl0.bjs.logging.ILogger;
 
 import java.util.ArrayList;
@@ -60,6 +65,39 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         this.resourceFabric = renderEngine.getFabric();
         this.resourceManager = new ResourceManager(ctx);
         this.dispatcher = new Dispatcher();
+        renderEngine.setOnWindowSizeChangedListener(this::winChanged);
+        regEvents();
+    }
+
+    private void regEvents() {
+       var eBus = this.ctx.getEventBus();
+       eBus.getController(WinSizeChangeEvent.class).subscribe(this::wscheListener);
+    }
+
+    private void wscheListener(WinSizeChangeEvent.WSCEPayload wscePayload) {
+        dispatcher.dispatchUnique(Stage.SYSTEM, ActionTags.WIN_RESIZE_CALLBACK_TAG ,(c) -> {
+            renderEngine.changeViewPort(wscePayload.width(), wscePayload.height(), wscePayload.aspectRatio());
+        });
+    }
+
+    private void winChanged(Pair<Integer, Integer> wh) {
+        this.fCtx.width = wh.first;
+        this.fCtx.height = wh.second;
+        enqueueWinSizeChange();
+    }
+
+    private void enqueueWinSizeChange() {
+        dispatcher.dispatchUnique(Stage.BEFORE_SCENE_UPDATE, ActionTags.WIN_RESIZE_TAG, (eCtx) -> {
+            if(scene == null) return;
+            for(var so : scene.getSceneObjects()){
+                if(so instanceof IComponentContainer ico)
+                    for(var consumer : ico.getEveryComponent(IWindowSizeChangeConsumerComponent.class))
+                        consumer.onWindowSizeChange(eCtx);
+
+                if(so instanceof IWindowSizeChangeConsumer consumer)
+                    consumer.onWindowSizeChange(eCtx);
+            }
+        });
     }
 
     public void initialize(String title, int w, int h){
@@ -91,7 +129,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     }
 
     public void start(){
-        cycle(); //TODO
+        cycle();
+        enqueueWinSizeChange();
     }
 
     private void cycle() {
@@ -112,6 +151,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             synchronized (lock) {
                 try {
                     if (scene != null) {
+                        dispatcher.fire(Stage.SYSTEM, this);
                         onKeyUpdate();
                         dispatcher.fire(Stage.BEFORE_SCENE_UPDATE, this);
                         onUpdate();
@@ -157,7 +197,6 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private void onKeyUpdate(){
         var input = renderEngine.pollInputData();
         if(input == null) return;
-
         if(input.isKeyDown(Key.ESCAPE)) {
             dispatcher.dispatch(Stage.AFTER_SCENE_RENDER, (c)->{
                 renderEngine.terminate();
@@ -282,5 +321,10 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     @Override
     public ILogger getDefaultLogger() {
         return l;
+    }
+
+    @Override
+    public IEventBus getEventBus() {
+        return ctx.getEventBus();
     }
 }
