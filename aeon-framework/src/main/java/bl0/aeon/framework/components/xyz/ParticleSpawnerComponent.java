@@ -55,6 +55,7 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
     public boolean useParentRotation = true;
     public boolean rotateParticlesWithParent = false;
     public boolean gravityInLocalSpace = false;
+    public boolean ignoreGravity = false;
 
     public boolean allowGenerationNewParticles = true;
 
@@ -113,7 +114,7 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
 
         Vector3f worldGravity = new Vector3f(gravity);
         Transform tr = parent.hasComponent(Transform.class) ? parent.getComponent(Transform.class) : null;
-        if (gravityInLocalSpace && tr != null) {
+        if (gravityInLocalSpace && tr != null && !ignoreGravity) {
             tr.getRotation().transform(worldGravity);
         }
         if (tr != null) {
@@ -148,7 +149,8 @@ public class ParticleSpawnerComponent extends BaseComponent implements Instances
             }
 
             // v += g*dt
-            p.vel.fma(dt, worldGravity);
+            if(!ignoreGravity)
+                p.vel.fma(dt, worldGravity);
 
             // drag
             if (drag > 0f) {

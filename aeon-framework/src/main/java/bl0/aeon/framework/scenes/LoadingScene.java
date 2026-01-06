@@ -11,7 +11,7 @@ import bl0.aeon.framework.components.xyz.BillboardComponent;
 import bl0.aeon.framework.components.xyz.RotatorComponent;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
-import bl0.aeon.render.common.resource.Texture;
+import bl0.aeon.render.common.resource.*;
 import org.joml.Vector3f;
 
 public class LoadingScene extends BaseScene {
@@ -19,6 +19,9 @@ public class LoadingScene extends BaseScene {
     private final long timeOut;
     private long startTime;
     private final BaseScene nextScene;
+
+    private IResource shader;
+    private Mesh plane;
 
     public LoadingScene(BaseScene nextScene, long timeOut) {
         this.nextScene = nextScene;
@@ -37,6 +40,8 @@ public class LoadingScene extends BaseScene {
     public void onHided(IEngineContext ctx) {
         super.onHided(ctx);
         entities.clear();
+        if(plane instanceof IDisposable iDisposable)
+            iDisposable.dispose();
     }
 
     @Override
@@ -48,8 +53,8 @@ public class LoadingScene extends BaseScene {
     }
 
     private void genScene(IEngineContext eCtx) {
-        var shader = eCtx.getResourceManager().getResource(ShaderPrograms.TEXTURED_COLOR_SOLID);
-        var plane = eCtx.getResourceFabric().createPlane("M_Plane");
+        shader = eCtx.getResourceManager().getResource(ShaderPrograms.TEXTURED_COLOR_SOLID);
+        plane = eCtx.getResourceFabric().createPlane("M_Plane");
         Entity logo = new Entity("Logo");
         logo.addComponent(new BillboardComponent().applyOnceAndRemove());
         var logo_mat = new AE_Material();

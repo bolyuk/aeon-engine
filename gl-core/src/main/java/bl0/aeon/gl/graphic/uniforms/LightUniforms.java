@@ -18,7 +18,7 @@ public class LightUniforms {
 
         program.resetIndex(Uniforms.Light.Point.POINTER);
 
-        if(e.getPointLights() == null)
+        if(e.getPointLights() == null || e.getPointLights().isEmpty())
             return;
 
         for(var lightPoint : e.getPointLights())

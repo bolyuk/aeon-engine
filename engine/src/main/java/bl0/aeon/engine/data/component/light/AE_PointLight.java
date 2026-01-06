@@ -14,6 +14,8 @@ public class AE_PointLight extends BaseComponent implements PointLight {
     public float linear;
     public float quadratic;
 
+    public Vector3f localOffset =  new Vector3f();
+
     public AE_PointLight(Vector3f diffuse, Vector3f specular, Vector3f ambient, float constant, float linear, float quadratic) {
         this.diffuse = diffuse;
         this.specular = specular;
@@ -54,8 +56,13 @@ public class AE_PointLight extends BaseComponent implements PointLight {
 
     @Override
     public Vector3f getPosition() {
-        if(parent != null && parent.hasComponent(Transform.class))
-            return parent.getComponent(Transform.class).getPosition();
-        return null;
+        if (parent == null || !parent.hasComponent(Transform.class)) return null;
+
+        Transform t = parent.getComponent(Transform.class);
+
+        Vector3f worldOffset = new Vector3f(localOffset);
+        t.getRotation().transform(worldOffset);
+
+        return new Vector3f(t.getPosition()).add(worldOffset);
     }
 }

@@ -9,6 +9,7 @@ import bl0.aeon.engine.data.component.AE_Transform;
 import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.fabrics.LightFabric;
 import bl0.aeon.engine.scene.BaseScene;
+import bl0.aeon.render.common.c.Colors;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.resource.Texture;
@@ -69,6 +70,16 @@ public class CubeTestScene extends BaseScene {
         testCube.addComponent(material);
 
         add(testCube);
+
+        var light_cube = new Entity("LightCube");
+        AE_Transform light_transform = new AE_Transform();
+        light_transform.position.set(new Vector3f(0,3,0));
+        light_cube.addComponent(light_transform);
+        light_cube.addComponent(material);
+        light_cube.addComponent(model);
+        light_cube.addComponent((Component)LightFabric.createPointLight(Colors.GREEN));
+
+        add(light_cube);
 
         Entity directionalLight = new Entity("DirectionalLight");
         directionalLight.addComponent((Component) LightFabric.createDirectionalLight());
