@@ -1,7 +1,7 @@
 package bl0.aeon.gl.base;
 
-import bl0.aeon.render.common.resource.IDisposable;
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IDisposable;
+import bl0.aeon.render.common.base.IResource;
 
 public abstract class GLResource implements IResource, IDisposable {
     public final int ID;

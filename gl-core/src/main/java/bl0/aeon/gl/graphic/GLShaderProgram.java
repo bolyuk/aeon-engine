@@ -3,7 +3,7 @@ package bl0.aeon.gl.graphic;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.gl.base.GLResource;
 import bl0.aeon.gl.base.IBindable;

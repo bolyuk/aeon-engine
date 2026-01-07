@@ -1,6 +1,6 @@
 package bl0.aeon.base.component.graphic;
 
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.base.component.Component;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.render.common.resource.Texture;

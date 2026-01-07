@@ -1,4 +1,4 @@
-package bl0.aeon.engine.core;
+package bl0.aeon.engine.data;
 
 public class ActionTags {
     public static final String WIN_RESIZE_TAG = "WIN_RESIZE";

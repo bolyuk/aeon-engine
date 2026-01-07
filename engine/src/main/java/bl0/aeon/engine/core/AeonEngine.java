@@ -3,7 +3,7 @@ package bl0.aeon.engine.core;
 import bl0.aeon.base.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.base.component.interfaces.InputConsumerComponent;
 import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
-import bl0.aeon.base.events.WinSizeChangeEvent;
+import bl0.aeon.base.events.ViewPortChangeEvent;
 import bl0.aeon.base.interfaces.IInputConsumer;
 import bl0.aeon.base.interfaces.IWindowSizeChangeConsumer;
 import bl0.aeon.base.scene.IComponentContainer;
@@ -18,16 +18,17 @@ import bl0.aeon.base.stage.IDispatcher;
 import bl0.aeon.base.stage.Stage;
 import bl0.aeon.engine.Dispatcher;
 import bl0.aeon.engine.ResourceManager;
+import bl0.aeon.engine.data.ActionTags;
 import bl0.aeon.engine.data.render.InstancedRenderObj;
 import bl0.aeon.engine.data.render.RenderObj;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.scene.BaseScene;
+import bl0.aeon.render.common.backend.BackendContainer;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
-import bl0.aeon.render.common.core.IResourceFabric;
-import bl0.aeon.render.common.core.IResourceManager;
-import bl0.aeon.render.common.core.RenderEngine;
+import bl0.aeon.render.common.backend.IResourceFabric;
+import bl0.aeon.base.core.IResourceManager;
 import bl0.aeon.render.common.core.RenderFrame;
 import bl0.aeon.render.common.data.input.Key;
 import bl0.aeon.render.common.data.light.DirectionalLight;
@@ -44,9 +45,8 @@ import java.util.List;
 
 public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
-    private final RenderEngine renderEngine;
+    private final BackendContainer backend;
     private final IResourceManager resourceManager;
-    private final IResourceFabric resourceFabric;
 
     private final Dispatcher dispatcher;
     private Scene scene;
@@ -59,35 +59,36 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private int fpsLimit = 60;
 
-    public AeonEngine(IContext ctx, RenderEngine renderEngine) {
+    public AeonEngine(IContext ctx, BackendContainer backend) {
         super(ctx);
-        this.renderEngine = renderEngine;
-        this.resourceFabric = renderEngine.getFabric();
+        this.backend = backend;
         this.resourceManager = new ResourceManager(ctx);
         this.dispatcher = new Dispatcher();
-        renderEngine.setOnWindowSizeChangedListener(this::winChanged);
+        backend.getWindowManager().setOnWindowSizeChangedListener(this::winChanged);
         regEvents();
     }
 
     private void regEvents() {
        var eBus = this.ctx.getEventBus();
-       eBus.getController(WinSizeChangeEvent.class).subscribe(this::wscheListener);
+       eBus.getController(ViewPortChangeEvent.class).subscribe(this::vpcheListener);
     }
 
-    private void wscheListener(WinSizeChangeEvent.WSCEPayload wscePayload) {
+    private void vpcheListener(ViewPortChangeEvent.VPCEPayload VPCEPayload) {
         dispatcher.dispatchUnique(Stage.SYSTEM, ActionTags.WIN_RESIZE_CALLBACK_TAG ,(c) -> {
-            renderEngine.changeViewPort(wscePayload.width(), wscePayload.height(), wscePayload.aspectRatio());
+            this.fCtx.width = VPCEPayload.width();
+            this.fCtx.height = VPCEPayload.height();
+            backend.getWindowManager().changeViewPort(VPCEPayload.width(), VPCEPayload.height(), VPCEPayload.aspectRatio());
         });
     }
 
     private void winChanged(Pair<Integer, Integer> wh) {
-        this.fCtx.width = wh.first;
-        this.fCtx.height = wh.second;
-        enqueueWinSizeChange();
+        enqueueWinSizeChange(wh);
     }
 
-    private void enqueueWinSizeChange() {
+    private void enqueueWinSizeChange(Pair<Integer, Integer> wh) {
         dispatcher.dispatchUnique(Stage.BEFORE_SCENE_UPDATE, ActionTags.WIN_RESIZE_TAG, (eCtx) -> {
+            this.fCtx.width = wh.first;
+            this.fCtx.height = wh.second;
             if(scene == null) return;
             for(var so : scene.getSceneObjects()){
                 if(so instanceof IComponentContainer ico)
@@ -101,10 +102,11 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     }
 
     public void initialize(String title, int w, int h){
-        renderEngine.initialize(title, w, h);
+        var winManager = backend.getWindowManager();
+        winManager.initialize(title, w, h);
+        winManager.bindContext();
         fCtx.height = h;
         fCtx.width = w;
-        renderEngine.bindContext();
     }
 
     public void loadDefaultResources(){
@@ -119,34 +121,33 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     }
 
     public void loadAndSaveTexture(String path, String name) {
-        var texture = resourceFabric.loadTextureFromResourcePath(path, name);
+        var texture = backend.getResourceFabric().loadTextureFromResourcePath(path, name);
         resourceManager.registerResource(texture);
     }
 
     public void loadAndSaveShader(String path, String name) {
-        var shaderProgram = resourceFabric.loadShaderProgramFromResourcePath(path, name);
+        var shaderProgram = backend.getResourceFabric().loadShaderProgramFromResourcePath(path, name);
         resourceManager.registerResource(shaderProgram);
     }
 
     public void start(){
         cycle();
-        enqueueWinSizeChange();
     }
 
     private void cycle() {
-        lastTime = renderEngine.getTime();
+        lastTime = backend.getRenderEngine().getTime();
 
         final double targetDt = 1.0 / fpsLimit;
 
         while (isRunning) {
-            double frameStart = renderEngine.getTime();
+            double frameStart = backend.getRenderEngine().getTime();
             double dt = frameStart - lastTime;
             lastTime = frameStart;
 
             if (dt > 0.25) dt = 0.25;
             fCtx.deltaTime = dt;
 
-            renderEngine.pollEvents();
+            backend.getWindowManager().pollEvents();
 
             synchronized (lock) {
                 try {
@@ -168,9 +169,9 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             if (!isRunning)
                 return;
 
-            renderEngine.swapBuffers();
+            backend.getRenderEngine().swapBuffers();
 
-            double frameEnd = renderEngine.getTime();
+            double frameEnd = backend.getRenderEngine().getTime();
             double frameTime = frameEnd - frameStart;
 
             double sleepSec = targetDt - frameTime;
@@ -195,11 +196,12 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
 
     private void onKeyUpdate(){
-        var input = renderEngine.pollInputData();
+        var winManager = backend.getWindowManager();
+        var input = winManager.pollInputData();
         if(input == null) return;
         if(input.isKeyDown(Key.ESCAPE)) {
             dispatcher.dispatch(Stage.AFTER_SCENE_RENDER, (c)->{
-                renderEngine.terminate();
+                winManager.terminate();
                 isRunning = false;
             });
         }
@@ -274,7 +276,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             ));
         }
 
-        renderEngine.render(new RenderFrame(scene.getCamera(), prepared));
+        backend.getRenderEngine().render(new RenderFrame(scene.getCamera(), prepared));
     }
 
     private void onUpdate() {
@@ -293,7 +295,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     @Override
     public IResourceFabric getResourceFabric() {
-        return resourceFabric;
+        return backend.getResourceFabric();
     }
 
     @Override
@@ -310,6 +312,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             this.scene = scene;
             if(scene instanceof BaseScene bs)
                 bs.onShowed(this);
+            // force update because of KDE!
+            scene.getCamera().setAspectRatio((float)fCtx.width/fCtx.height);
         }
     }
 

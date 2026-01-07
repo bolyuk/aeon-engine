@@ -1,4 +1,4 @@
-package bl0.aeon.gl;
+package bl0.aeon.gl.backend;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -10,7 +10,7 @@ import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
 import bl0.aeon.gl.graphic.mesh.VertexAttribute;
-import bl0.aeon.render.common.core.IResourceFabric;
+import bl0.aeon.render.common.backend.IResourceFabric;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.render.common.resource.Texture;

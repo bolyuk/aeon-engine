@@ -4,13 +4,12 @@ import java.nio.FloatBuffer;
 import java.util.List;
 
 import bl0.aeon.gl.c.Sizes;
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.gl.base.GLResource;
 import bl0.aeon.gl.base.IBindable;
 
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL33;
 
 public class GLMesh extends GLResource implements IBindable, Mesh {

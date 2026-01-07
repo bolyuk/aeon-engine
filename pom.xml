@@ -11,13 +11,14 @@
 
     <modules>
         <module>gl-core</module>
-        <module>gl-common</module>
+        <module>render-common</module>
         <module>engine</module>
         <module>engine-common</module>
         <module>test</module>
         <module>aeon-framework</module>
         <module>aeon-physic</module>
         <module>aeon-ui</module>
+        <module>engine-common/backend-common</module>
     </modules>
 
     <properties>

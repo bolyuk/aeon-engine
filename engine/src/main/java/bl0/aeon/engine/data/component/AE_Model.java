@@ -1,7 +1,7 @@
 package bl0.aeon.engine.data.component;
 
 import bl0.aeon.base.component.graphic.Model;
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.render.common.resource.Mesh;
 
 public class AE_Model extends BaseComponent implements Model {

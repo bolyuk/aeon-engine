@@ -2,8 +2,7 @@ package bl0.aeon.base.core;
 
 import bl0.aeon.base.scene.Scene;
 import bl0.aeon.base.stage.IDispatcher;
-import bl0.aeon.render.common.core.IResourceFabric;
-import bl0.aeon.render.common.core.IResourceManager;
+import bl0.aeon.render.common.backend.IResourceFabric;
 import bl0.bjs.eventbus.IEventBus;
 import bl0.bjs.logging.ILogger;
 

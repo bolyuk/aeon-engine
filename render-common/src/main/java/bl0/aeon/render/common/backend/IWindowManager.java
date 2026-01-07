@@ -1,25 +1,15 @@
-package bl0.aeon.render.common.core;
-
+package bl0.aeon.render.common.backend;
 
 import bl0.aeon.render.common.data.input.InputData;
 import bl0.bjs.common.core.event.action.Action;
 import bl0.bjs.common.core.tuple.Pair;
 
-public interface RenderEngine {
-
-    void render(RenderFrame renderContext);
-
+public interface IWindowManager {
     void initialize(String title, int width, int height);
-
-    double getTime();
-
-    IResourceFabric getFabric();
-
     void bindContext();
 
     void pollEvents();
 
-    void swapBuffers();
 
     InputData pollInputData();
 
@@ -28,6 +18,8 @@ public interface RenderEngine {
     void captureCursor(boolean flag);
 
     void changeViewPort(int width, int height, float aspectRatio);
+
+    void setWindowSize(int width, int height);
 
     void setOnWindowSizeChangedListener(Action<Pair<Integer, Integer>> onWindowSizeChangedListener);
 

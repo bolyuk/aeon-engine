@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bl0.aeon.base.core.IEngineContext;
+import bl0.aeon.base.events.ViewPortChangeEvent;
 import bl0.aeon.base.scene.Scene;
 import bl0.aeon.base.scene.SceneObject;
 import bl0.aeon.render.common.data.render.Camera;
@@ -24,6 +25,9 @@ public class BaseScene implements Scene {
 
     public void onShowed(IEngineContext ctx) {
         this.eCtx = ctx;
+        int width = ctx.getFrameContext().getWidth();
+        int height = ctx.getFrameContext().getHeight();
+        camera.setAspectRatio(width/height);
     }
 
     public void onHided(IEngineContext ctx) {

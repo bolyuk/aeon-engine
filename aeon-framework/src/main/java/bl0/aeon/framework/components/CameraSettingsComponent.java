@@ -3,13 +3,11 @@ package bl0.aeon.framework.components;
 import bl0.aeon.base.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.base.core.IEngineContext;
 import bl0.aeon.base.core.IFrameContext;
-import bl0.aeon.base.events.WinSizeChangeEvent;
+import bl0.aeon.base.events.ViewPortChangeEvent;
 import bl0.aeon.engine.data.component.BaseComponent;
 
 public class CameraSettingsComponent extends BaseComponent
         implements IWindowSizeChangeConsumerComponent {
-
-    public float baseAspect = 16f / 9f;
 
     public float minAspect = 4f / 3f;
     public float maxAspect = 21f / 9f;
@@ -31,8 +29,8 @@ public class CameraSettingsComponent extends BaseComponent
         cam.setAspectRatio(usedAspect);
 
         eCtx.getEventBus()
-                .getController(WinSizeChangeEvent.class)
-                .fireEvent(new WinSizeChangeEvent.WSCEPayload(fCtx.getWidth(), fCtx.getHeight(), usedAspect));
+                .getController(ViewPortChangeEvent.class)
+                .fireEvent(new ViewPortChangeEvent.VPCEPayload(fCtx.getWidth(), fCtx.getHeight(), usedAspect));
     }
 }
 

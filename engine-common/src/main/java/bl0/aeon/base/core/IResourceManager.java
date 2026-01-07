@@ -1,6 +1,6 @@
-package bl0.aeon.render.common.core;
+package bl0.aeon.base.core;
 
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IResource;
 
 public interface IResourceManager {
 

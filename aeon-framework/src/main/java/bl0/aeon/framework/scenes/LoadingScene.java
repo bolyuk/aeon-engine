@@ -9,6 +9,8 @@ import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.scene.BaseScene;
 import bl0.aeon.framework.components.xyz.BillboardComponent;
 import bl0.aeon.framework.components.xyz.RotatorComponent;
+import bl0.aeon.render.common.base.IDisposable;
+import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.resource.*;

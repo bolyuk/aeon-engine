@@ -2,9 +2,8 @@ package bl0.aeon.gl.graphic;
 
 import bl0.aeon.gl.base.GLResource;
 import bl0.aeon.gl.base.IBindable;
-import bl0.aeon.render.common.resource.IResource;
+import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.render.common.resource.Texture;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
 import java.nio.ByteBuffer;
