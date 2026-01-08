@@ -8,6 +8,5 @@ public interface Camera {
     Matrix4f getProjectionMatrix();
     Vector3f getPosition();
     void setPosition(Vector3f position);
-
     void setAspectRatio(float aspectRatio);
 }

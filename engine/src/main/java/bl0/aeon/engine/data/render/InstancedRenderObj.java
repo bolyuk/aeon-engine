@@ -4,7 +4,7 @@ import bl0.aeon.base.component.graphic.Material;
 import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
 import bl0.aeon.render.common.data.light.DirectionalLight;
 import bl0.aeon.render.common.data.light.PointLight;
-import bl0.aeon.render.common.data.render.IInstancedRenderable;
+import bl0.aeon.render.common.data.render.scene.IInstancedRenderable;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.render.common.resource.Texture;

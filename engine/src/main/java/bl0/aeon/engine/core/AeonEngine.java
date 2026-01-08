@@ -25,11 +25,13 @@ import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.scene.BaseScene;
 import bl0.aeon.render.common.backend.BackendContainer;
+import bl0.aeon.render.common.c.resources.Fonts;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.backend.IResourceFabric;
 import bl0.aeon.base.core.IResourceManager;
-import bl0.aeon.render.common.core.RenderFrame;
+import bl0.aeon.render.common.data.render.RenderFrame;
+import bl0.aeon.render.common.data.input.InputData;
 import bl0.aeon.render.common.data.input.Key;
 import bl0.aeon.render.common.data.light.DirectionalLight;
 import bl0.aeon.render.common.data.light.PointLight;
@@ -41,6 +43,7 @@ import bl0.bjs.eventbus.IEventBus;
 import bl0.bjs.logging.ILogger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AeonEngine extends BJSBaseClass implements IEngineContext {
@@ -58,6 +61,10 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private boolean isRunning = true;
 
     private int fpsLimit = 60;
+
+    private HashMap<Key, Long> sysKeysDelayData = new HashMap<>();
+
+    private long sysKeyDelay = 300;
 
     public AeonEngine(IContext ctx, BackendContainer backend) {
         super(ctx);
@@ -102,13 +109,25 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     }
 
     public void initialize(String title, int w, int h){
+        printLogo();
         var winManager = backend.getWindowManager();
         winManager.initialize(title, w, h);
         winManager.bindContext();
         fCtx.height = h;
         fCtx.width = w;
     }
-
+    
+    private void printLogo(){
+        System.out.println(
+                " ________  _______   ________  ________      \n" +
+                "|\\   __  \\|\\  ___ \\ |\\   __  \\|\\   ___  \\    \n" +
+                "\\ \\  \\|\\  \\ \\   __/|\\ \\  \\|\\  \\ \\  \\\\ \\  \\   \n" +
+                " \\ \\   __  \\ \\  \\_|/_\\ \\  \\\\\\  \\ \\  \\\\ \\  \\  \n" +
+                "  \\ \\  \\ \\  \\ \\  \\_|\\ \\ \\  \\\\\\  \\ \\  \\\\ \\  \\ \n" +
+                "   \\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\\\ \\__\\\n" +
+                "    \\|__|\\|__|\\|_______|\\|_______|\\|__| \\|__|\n" +
+                "\n");
+    }
     public void loadDefaultResources(){
         loadAndSaveTexture("textures/error-texture.png", Textures.ERROR);
         loadAndSaveTexture("textures/gear-b-texture.png", Textures.GEAR_BIG);
@@ -118,6 +137,10 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         loadAndSaveShader("shaders/color_solid", ShaderPrograms.COLOR_SOLID);
         loadAndSaveShader("shaders/texture_solid", ShaderPrograms.TEXTURED_COLOR_SOLID);
         loadAndSaveShader("shaders/instanced_texture_solid", ShaderPrograms.INSTANCED_TEXTURED_COLOR_SOLID);
+
+        var font = backend.getResourceFabric().loadFontFromResourcePath("fonts/default-font.ttf", Fonts.DEFAULT, 16);
+        resourceManager.registerResource(font);
+        loadAndSaveShader("shaders/text_solid", ShaderPrograms.TEXT_SOLID);
     }
 
     public void loadAndSaveTexture(String path, String name) {
@@ -146,7 +169,6 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
             if (dt > 0.25) dt = 0.25;
             fCtx.deltaTime = dt;
-
             backend.getWindowManager().pollEvents();
 
             synchronized (lock) {
@@ -173,11 +195,12 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
             double frameEnd = backend.getRenderEngine().getTime();
             double frameTime = frameEnd - frameStart;
-
             double sleepSec = targetDt - frameTime;
             if (sleepSec > 0) {
                 sleepMillisPrecise(sleepSec);
             }
+
+            fCtx.fps = dt > 0 ? (1.0 / dt) : 0.0;
         }
     }
 
@@ -199,10 +222,15 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         var winManager = backend.getWindowManager();
         var input = winManager.pollInputData();
         if(input == null) return;
-        if(input.isKeyDown(Key.ESCAPE)) {
-            dispatcher.dispatch(Stage.AFTER_SCENE_RENDER, (c)->{
+        if(isKeyDownAndDelayPassed(input, Key.ESCAPE)) {
+            dispatcher.dispatchUnique(Stage.AFTER_SCENE_RENDER, ActionTags.KEY_INPUT_ESC_TAG , (c)->{
                 winManager.terminate();
                 isRunning = false;
+            });
+        }
+        if(isKeyDownAndDelayPassed(input, Key.F11)) {
+            dispatcher.dispatchUnique(Stage.AFTER_SCENE_RENDER,ActionTags.KEY_INPUT_F11_TAG, (c)->{
+                winManager.setFullscreen(!winManager.isFullscreen());
             });
         }
 
@@ -216,6 +244,15 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                 ic.onInput(input, this);
             }
         }
+    }
+
+    private boolean isKeyDownAndDelayPassed(InputData input, Key key) {
+        sysKeysDelayData.computeIfAbsent(key, k -> 0L);
+        if(input.isKeyDown(key) && sysKeysDelayData.get(key)+sysKeyDelay <= System.currentTimeMillis()) {
+            sysKeysDelayData.put(key, System.currentTimeMillis());
+            return true;
+        }
+        return false;
     }
 
     private void onRender() {
@@ -276,7 +313,10 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             ));
         }
 
-        backend.getRenderEngine().render(new RenderFrame(scene.getCamera(), prepared));
+        backend.getRenderEngine().render(new RenderFrame(scene.getCamera(),
+                prepared,
+                getFrameContext().getWidth(),
+                getFrameContext().getHeight()));
     }
 
     private void onUpdate() {
@@ -312,7 +352,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             this.scene = scene;
             if(scene instanceof BaseScene bs)
                 bs.onShowed(this);
-            // force update because of KDE!
+
             scene.getCamera().setAspectRatio((float)fCtx.width/fCtx.height);
         }
     }

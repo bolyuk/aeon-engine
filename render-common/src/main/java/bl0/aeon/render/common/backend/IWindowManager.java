@@ -21,6 +21,10 @@ public interface IWindowManager {
 
     void setWindowSize(int width, int height);
 
+    void setFullscreen(boolean value);
+
+    boolean isFullscreen();
+
     void setOnWindowSizeChangedListener(Action<Pair<Integer, Integer>> onWindowSizeChangedListener);
 
     void remOnWindowSizeChangedListener(Action<Pair<Integer, Integer>> onWindowSizeChangedListener);

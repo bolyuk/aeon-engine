@@ -8,6 +8,8 @@ public class Window {
     public int width;
     public int height;
 
+    public boolean fullscreen;
+
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;

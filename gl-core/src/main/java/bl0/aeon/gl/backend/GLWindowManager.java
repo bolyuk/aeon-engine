@@ -5,25 +5,29 @@ import bl0.aeon.gl.base.CoreException;
 import bl0.aeon.gl.base.GLBaseClass;
 import bl0.aeon.gl.data.GLInputData;
 import bl0.aeon.gl.graphic.Window;
-import bl0.aeon.gl.graphic.utils.ViewportUtil;
+import bl0.aeon.gl.utils.InputUtils;
+import bl0.aeon.gl.utils.ViewportUtil;
 import bl0.aeon.render.common.backend.IWindowManager;
 import bl0.aeon.render.common.data.input.InputData;
 import bl0.aeon.render.common.data.input.Key;
-import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
 import bl0.bjs.common.core.event.action.Action;
 import bl0.bjs.common.core.event.action.ActionController;
 import bl0.bjs.common.core.tuple.Pair;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import java.util.HashMap;
+
 public class GLWindowManager extends GLBaseClass implements IWindowManager {
     private final ActionController<Pair<Integer, Integer>> windowSizeChangedController = new ActionController<>();
-    private Window window;
 
+    private final HashMap<Integer, Key> keyMapping = InputUtils.getDefaultKeyMapping();
+    private Window window;
     public GLWindowManager(GLState state, IContext ctx) {
         super(state, ctx);
     }
@@ -49,16 +53,22 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
             throw new CoreException("Failed to create the GLFW window");
         }
 
-        int[] fbw = new int[1];
-        int[] fbh = new int[1];
+
 
         // because on KDE FramebufferSize != WindowSize
-        GLFW.glfwGetFramebufferSize(window.ID, fbw, fbh);
-        window.width = fbw[0];
-        window.height = fbh[0];
+        setWindowSizeFromFramebuffer();
 
         glState.isWindowCreated = true;
         glState.windowID = this.window.ID;
+    }
+
+    private void setWindowSizeFromFramebuffer() {
+        int[] fbw = new int[1];
+        int[] fbh = new int[1];
+
+        GLFW.glfwGetFramebufferSize(window.ID, fbw, fbh);
+        window.width = fbw[0];
+        window.height = fbh[0];
     }
 
     @Override
@@ -95,6 +105,7 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
         });
 
         GLFW.glfwSwapInterval(1);
+        glState.isContextBound = true;
     }
 
     @Override
@@ -106,42 +117,12 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
     public InputData pollInputData() {
         GLInputData input = new GLInputData();
 
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_W))
-            input.keys.add(Key.W);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_A))
-            input.keys.add(Key.A);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_S))
-            input.keys.add(Key.S);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_D))
-            input.keys.add(Key.D);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_ESCAPE))
-            input.keys.add(Key.ESCAPE);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_SPACE))
-            input.keys.add(Key.SPACE);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_BACKSPACE))
-            input.keys.add(Key.BACKSPACE);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_ENTER))
-            input.keys.add(Key.ENTER);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_Q))
-            input.keys.add(Key.Q);
-        /// >.<
-        if(isPressed(GLFW.GLFW_KEY_E))
-            input.keys.add(Key.E);
+        for(var pair : keyMapping.entrySet()) {
+            if(GLFW.glfwGetKey(window.ID, pair.getKey()) == GLFW.GLFW_PRESS)
+                input.keys.add(pair.getValue());
+        }
 
         return input.isAnyDown() ? input : null;
-    }
-
-    private boolean isPressed(int key){
-        return GLFW.glfwGetKey(window.ID, key) == GLFW.GLFW_PRESS;
     }
 
     @Override
@@ -163,6 +144,44 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
     @Override
     public void setWindowSize(int width, int height) {
         GLFW.glfwSetWindowSize(window.ID, width, height);
+    }
+
+    @Override
+    public void setFullscreen(boolean value) {
+        if(!glState.isWindowCreated)
+            throw new CoreException("GLWindow is not created");
+        if(!glState.isContextBound)
+            throw new CoreException("GLContext is not bound");
+
+        if(value) {
+            long monitor = GLFW.glfwGetPrimaryMonitor(); //TODO
+            GLFWVidMode mode = GLFW.glfwGetVideoMode(monitor);
+
+            GLFW.glfwSetWindowMonitor(
+                    window.ID,
+                    monitor,
+                    0, 0,
+                    mode.width(),
+                    mode.height(),
+                    mode.refreshRate()
+            );
+        } else {
+            GLFW.glfwSetWindowMonitor(
+                    window.ID,
+                    0L,
+                    0,0, //TODO
+                    800, 500,
+                    0
+            );
+        }
+        setWindowSizeFromFramebuffer();
+        window.fullscreen = value;
+        windowSizeChangedController.invoke(Pair.of(window.width, window.height));
+    }
+
+    @Override
+    public boolean isFullscreen(){
+     return window.fullscreen;
     }
 
     @Override

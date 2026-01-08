@@ -16,6 +16,11 @@ public class GLInputData implements InputData {
     }
 
     @Override
+    public long keyDownTime(Key key) {
+        return -1; //TODO
+    }
+
+    @Override
     public boolean isAnyDown() {
         return !keys.isEmpty();
     }

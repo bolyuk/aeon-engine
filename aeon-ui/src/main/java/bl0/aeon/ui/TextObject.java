@@ -7,23 +7,27 @@ import bl0.aeon.base.core.IFrameContext;
 import bl0.aeon.base.scene.SceneObject;
 import bl0.aeon.render.common.data.light.DirectionalLight;
 import bl0.aeon.render.common.data.light.PointLight;
-import bl0.aeon.render.common.data.render.IRenderable;
-import bl0.aeon.render.common.data.render.ISingleRenderable;
+import bl0.aeon.render.common.data.render.ui.ITextRenderable;
+import bl0.aeon.render.common.resource.Font;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.render.common.resource.Texture;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.List;
 
-public class TextObject extends SceneObject implements ISingleRenderable {
+public class TextObject extends SceneObject implements ITextRenderable {
 
     public String text;
 
     public Material material;
 
-    public Transform transform;
+    public Font font;
+
+    public Vector2f position = new Vector2f();
 
     public Mesh mesh;
 
@@ -35,30 +39,13 @@ public class TextObject extends SceneObject implements ISingleRenderable {
     public void update(IFrameContext fCtx, IEngineContext eCtx) {
 
     }
-
     @Override
     public ShaderProgram getShaderProgram() {
         return material.getShaderProgram();
     }
-
-    @Override
-    public Texture getTexture() {
-        return material.getTexture();
-    }
-
     @Override
     public Vector4f getColor() {
         return material.getColor();
-    }
-
-    @Override
-    public List<PointLight> getPointLights() {
-        return List.of();
-    }
-
-    @Override
-    public DirectionalLight getDirectionalLight() {
-        return null;
     }
 
     @Override
@@ -67,12 +54,16 @@ public class TextObject extends SceneObject implements ISingleRenderable {
     }
 
     @Override
-    public boolean isDepthTestEnabled() {
-        return false;
+    public String getText() {
+        return text;
+    }
+    @Override
+    public Font getFont() {
+        return font;
     }
 
     @Override
-    public Matrix4f getMatrix() {
-        return transform.getMatrix();
+    public Vector2f getPosition() {
+        return position;
     }
 }

@@ -4,20 +4,34 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import bl0.aeon.gl.graphic.GLBitmapFont;
+import bl0.aeon.gl.graphic.GLCharacter;
 import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
+import bl0.aeon.gl.graphic.mesh.GLTextMesh;
 import bl0.aeon.gl.graphic.mesh.VertexAttribute;
 import bl0.aeon.render.common.backend.IResourceFabric;
+import bl0.aeon.render.common.resource.Font;
 import bl0.aeon.render.common.resource.Mesh;
 import bl0.aeon.render.common.resource.ShaderProgram;
 import bl0.aeon.render.common.resource.Texture;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.opengl.GL33;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.util.freetype.FT_Bitmap;
+import org.lwjgl.util.freetype.FT_Face;
+import org.lwjgl.util.freetype.FT_GlyphSlot;
+
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.util.freetype.FreeType.*;
 
 public class GLResourceFabric implements IResourceFabric {
 
@@ -31,6 +45,101 @@ public class GLResourceFabric implements IResourceFabric {
         String vertex = readTextResource(shaderDir+"/vertex.shader");
         String fragment = readTextResource(shaderDir+"/fragment.shader");
         return new GLShaderProgram(vertex, fragment, name);
+    }
+
+    @Override
+    public Font loadFontFromResourcePath(String path, String name, int size) {
+        try (MemoryStack stack = stackPush()) {
+            int ascent = 0;
+
+            ByteBuffer fontData = resourceToByteBuffer(path);
+            GL33.glPixelStorei(GL33.GL_UNPACK_ALIGNMENT, 1);
+
+            PointerBuffer libPtr = stack.mallocPointer(1);
+            int err = FT_Init_FreeType(libPtr);
+            if (err != 0) throw new RuntimeException("FT_Init_FreeType failed: " + err);
+            long ftLib = libPtr.get(0);
+
+            PointerBuffer facePtr = stack.mallocPointer(1);
+            err = FT_New_Memory_Face(ftLib, fontData, 0, facePtr);
+            if (err != 0) {
+                FT_Done_FreeType(ftLib);
+                throw new RuntimeException("FT_New_Memory_Face failed: " + err);
+            }
+
+            FT_Face face = FT_Face.create(facePtr.get(0));
+            FT_Set_Pixel_Sizes(face, 0, size);
+
+            GLBitmapFont font = new GLBitmapFont(name, size);
+            font.characters = new HashMap<>();
+
+            GL33.glPixelStorei(GL33.GL_UNPACK_ALIGNMENT, 1);
+
+            for (int c = 32; c < 128; c++) {
+
+                if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0)
+                    continue;
+
+                FT_GlyphSlot glyph = face.glyph();
+                FT_Bitmap bmp = glyph.bitmap();
+
+                ascent = Math.max(ascent, glyph.bitmap_top());
+
+                int w = bmp.width();
+                int h = bmp.rows();
+
+                Vector2f chSize = new Vector2f(w, h);
+                Vector2f chBearing = new Vector2f(glyph.bitmap_left(), glyph.bitmap_top());
+                int chAdvance = (int) glyph.advance().x(); // 26.6 fixed
+
+                if (w == 0 || h == 0) {
+                    GLCharacter ch = new GLCharacter(
+                            name + "_c_" + c,
+                            0, 0,
+                            chSize,
+                            chAdvance,
+                            chBearing,
+                            null
+                    );
+                    font.characters.put((char) c, ch);
+                    continue;
+                }
+
+                int pitch = bmp.pitch();
+                ByteBuffer src = bmp.buffer(pitch * h);
+
+                // pack + flip vertically
+                ByteBuffer packed = org.lwjgl.BufferUtils.createByteBuffer(w * h);
+
+                for (int row = 0; row < h; row++) {
+                    int srcRow = row * pitch;
+                    int dstRow = (h - 1 - row) * w; // flip Y
+                    for (int col = 0; col < w; col++) {
+                        packed.put(dstRow + col, src.get(srcRow + col));
+                    }
+                }
+                packed.position(0);
+
+                GLCharacter ch = new GLCharacter(
+                        name + "_c_" + c,
+                        w, h,
+                        chSize,
+                        chAdvance,
+                        chBearing,
+                        packed
+                );
+
+                font.characters.put((char) c, ch);
+            }
+
+            FT_Done_Face(face);
+            FT_Done_FreeType(ftLib);
+
+            GL33.glPixelStorei(GL33.GL_UNPACK_ALIGNMENT, 4);
+
+            font.ascent = ascent;
+            return font;
+        }
     }
 
     @Override
@@ -114,7 +223,7 @@ public class GLResourceFabric implements IResourceFabric {
 
     @Override
     public Texture loadTextureFromPath(String path, String name) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
@@ -141,7 +250,7 @@ public class GLResourceFabric implements IResourceFabric {
     public Texture loadTextureFromResourcePath(String path, String name) {
         ByteBuffer fileData = resourceToByteBuffer(path);
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
@@ -157,6 +266,11 @@ public class GLResourceFabric implements IResourceFabric {
             STBImage.stbi_image_free(pixels);
             return tex;
         }
+    }
+
+    @Override
+    public Mesh createFontMesh(String name) {
+        return new GLTextMesh(name);
     }
 
     private static void addVertex(List<Float> list, float x, float y, float z) {

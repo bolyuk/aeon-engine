@@ -7,8 +7,11 @@ public enum Key {
     D,
     Q,
     E,
+
     ESCAPE,
     SPACE,
     ENTER,
     BACKSPACE,
+
+    F11,
 }

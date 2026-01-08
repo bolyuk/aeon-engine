@@ -85,8 +85,6 @@ public class GLMesh extends GLResource implements IBindable, Mesh {
         if (instanceVboID != 0) return;
 
         instanceCapacity = Math.max(1, initialCapacity);
-
-        // VAO должен быть активен, потому что мы настраиваем атрибуты
         GL30.glBindVertexArray(this.vaoID);
 
         instanceVboID = GL30.glGenBuffers();

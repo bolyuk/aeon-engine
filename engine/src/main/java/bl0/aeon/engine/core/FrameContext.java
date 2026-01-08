@@ -7,6 +7,8 @@ public class FrameContext implements IFrameContext {
     public int width;
     public int height;
 
+    public double fps;
+
     @Override
     public double getDeltaTime() {
         return deltaTime;
@@ -20,5 +22,10 @@ public class FrameContext implements IFrameContext {
     @Override
     public int getHeight() {
         return height;
+    }
+
+    @Override
+    public double getFPS() {
+        return fps;
     }
 }

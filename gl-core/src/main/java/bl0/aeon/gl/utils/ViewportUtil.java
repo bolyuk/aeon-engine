@@ -1,4 +1,4 @@
-package bl0.aeon.gl.graphic.utils;
+package bl0.aeon.gl.utils;
 
 public final class ViewportUtil {
 

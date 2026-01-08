@@ -7,6 +7,7 @@ import bl0.aeon.engine.data.component.AE_Model;
 import bl0.aeon.engine.data.component.AE_Transform;
 import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.scene.BaseScene;
+import bl0.aeon.framework.components.CameraSettingsComponent;
 import bl0.aeon.framework.components.xyz.BillboardComponent;
 import bl0.aeon.framework.components.xyz.RotatorComponent;
 import bl0.aeon.render.common.base.IDisposable;
@@ -63,6 +64,7 @@ public class LoadingScene extends BaseScene {
         logo_mat.setTexture(eCtx.getResourceManager().getResource(Textures.LOGO, Texture.class));
         logo_mat.setShaderProgram(shader);
         logo.addComponent(logo_mat);
+        logo.addComponent(new CameraSettingsComponent());
 
         var logo_model = new AE_Model();
         logo_model.setMesh(plane);
