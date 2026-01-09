@@ -13,5 +13,8 @@ public enum Key {
     ENTER,
     BACKSPACE,
 
+    MOUSE_LEFT,
+    MOUSE_RIGHT,
+
     F11,
 }

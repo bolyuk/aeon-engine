@@ -3,6 +3,8 @@ package bl0.aeon.engine.core;
 import bl0.aeon.base.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.base.component.interfaces.InputConsumerComponent;
 import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
+import bl0.aeon.base.component.ui.UIElement;
+import bl0.aeon.base.component.ui.UITextElement;
 import bl0.aeon.base.events.ViewPortChangeEvent;
 import bl0.aeon.base.interfaces.IInputConsumer;
 import bl0.aeon.base.interfaces.IWindowSizeChangeConsumer;
@@ -23,9 +25,12 @@ import bl0.aeon.engine.data.render.InstancedRenderObj;
 import bl0.aeon.engine.data.render.RenderObj;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
+import bl0.aeon.engine.data.render.ui.TextRenderObj;
+import bl0.aeon.engine.data.render.ui.UIRenderObj;
 import bl0.aeon.engine.scene.BaseScene;
 import bl0.aeon.render.common.backend.BackendContainer;
 import bl0.aeon.render.common.c.resources.Fonts;
+import bl0.aeon.render.common.c.resources.Meshes;
 import bl0.aeon.render.common.c.resources.ShaderPrograms;
 import bl0.aeon.render.common.c.resources.Textures;
 import bl0.aeon.render.common.backend.IResourceFabric;
@@ -140,7 +145,12 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
         var font = backend.getResourceFabric().loadFontFromResourcePath("fonts/default-font.ttf", Fonts.DEFAULT, 16);
         resourceManager.registerResource(font);
+
         loadAndSaveShader("shaders/text_solid", ShaderPrograms.TEXT_SOLID);
+        loadAndSaveShader("shaders/ui_solid", ShaderPrograms.UI_SOLID);
+
+        resourceManager.registerResource(getResourceFabric().createUITextMesh(Meshes.UI_TEXT_MESH));
+        resourceManager.registerResource(getResourceFabric().createUIQuadMesh(Meshes.UI_QUAD_MESH));
     }
 
     public void loadAndSaveTexture(String path, String name) {
@@ -276,10 +286,29 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
         for (SceneObject so : sceneObjects) {
 
+            // self renderable
             if (so instanceof IRenderable r) {
                 prepared.add(r);
                 continue;
             }
+
+            // UI
+            if(so instanceof UITextElement itr){
+                prepared.add(new TextRenderObj(itr.getPosition(),
+                        itr.getSize(),
+                        itr.getMaterial(),
+                        itr.getMesh(),
+                        itr.getFont(),
+                        itr.getText(),
+                        itr.getTextMaterial(),
+                        itr.getTextMesh()));
+            } else if(so instanceof UIElement iur){
+                prepared.add(new UIRenderObj(iur.getPosition(),
+                        iur.getSize(),
+                        iur.getMaterial(),
+                        iur.getMesh()));
+            }
+
 
             if (!(so instanceof IComponentContainer c)) continue;
 
@@ -299,6 +328,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                             icc.getMaterial().isDepthTestEnabled()
                     ));
 
+            // default IComponentContainer
             if (transform == null || model == null || material == null) continue;
 
             prepared.add(new RenderObj(

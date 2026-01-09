@@ -2,11 +2,13 @@ package bl0.aeon.gl.backend;
 
 import bl0.aeon.gl.GLState;
 import bl0.aeon.gl.base.GLBaseClass;
+import bl0.aeon.gl.c.Uniforms;
 import bl0.aeon.gl.graphic.GLBitmapFont;
 import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
-import bl0.aeon.gl.graphic.mesh.GLTextMesh;
+import bl0.aeon.gl.graphic.mesh.ui.UIQuadMesh;
+import bl0.aeon.gl.graphic.mesh.ui.UITextMesh;
 import bl0.aeon.gl.graphic.uniforms.*;
 import bl0.aeon.render.common.backend.IRenderManager;
 import bl0.aeon.render.common.data.render.Camera;
@@ -16,6 +18,7 @@ import bl0.aeon.render.common.data.render.scene.IInstancedRenderable;
 import bl0.aeon.render.common.data.render.scene.ISceneRenderable;
 import bl0.aeon.render.common.data.render.scene.ISingleRenderable;
 import bl0.aeon.render.common.data.render.ui.ITextRenderable;
+import bl0.aeon.render.common.data.render.ui.IUIRenderable;
 import bl0.bjs.common.base.IContext;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -54,41 +57,56 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
     }
 
     private void innerRender(RenderFrame rFrame) {
-        List<ITextRenderable> ui = new ArrayList<>();
+        List<IUIRenderable> ui = new ArrayList<>();
 
         for(IRenderable raw : rFrame.renderables()){
             if(raw instanceof ISceneRenderable obj)
                 drawSceneRenderable(obj, rFrame.camera());
-            else if(raw instanceof ITextRenderable obj)
+            else if(raw instanceof IUIRenderable obj)
                 ui.add(obj);
         }
 
         GL11.glDisable(GL11.GL_CULL_FACE);
 
-        for(ITextRenderable uiElement : ui)
+        for(IUIRenderable uiElement : ui)
             drawUIElement(uiElement, rFrame.framebufferWidth(), rFrame.framebufferHeight());
 
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
 
-    private void drawUIElement(ITextRenderable uiElement, int w, int h) {
-        if (!(uiElement.getShaderProgram() instanceof GLShaderProgram program)) return;
-        if (!(uiElement.getFont() instanceof GLBitmapFont font)) return;
-        if (!(uiElement.getMesh() instanceof GLTextMesh mesh)) return;
+    private void drawUIElement(IUIRenderable uiElement, int w, int h) {
+        if (uiElement.getShaderProgram() instanceof GLShaderProgram program &&
+        uiElement.getMesh() instanceof UIQuadMesh mesh) {
 
-        program.bind();
-        mesh.bind();
+            program.bind();
+            mesh.bind();
 
+            program.setUniform("projection", new Matrix4f().ortho2D(0, w, h, 0));
+            ColorUniforms.setUniforms(uiElement, program);
 
-        program.setUniform("projection", new Matrix4f().ortho2D(0, w, h, 0));
-        program.setUniform("uTexture0", 0);
-        ColorUniforms.setUniforms(uiElement, program);
+            mesh.draw(uiElement.getPosition(), uiElement.getSize());
 
-        Vector2f pos = uiElement.getPosition();
-        font.draw(uiElement.getText(), pos.x, pos.y, mesh);
+            mesh.unbind();
+            program.unbind();
 
-        mesh.unbind();
-        program.unbind();
+        } else if(uiElement instanceof ITextRenderable itr) {
+            if (!(itr.getFont() instanceof GLBitmapFont font)) return;
+            if (!(itr.getTextMesh() instanceof UITextMesh textMesh)) return;
+            if (!(itr.getTextShader() instanceof GLShaderProgram textShader)) return;
+
+            textShader.bind();
+            textMesh.bind();
+
+            textShader.setUniform("projection", new Matrix4f().ortho2D(0, w, h, 0));
+            textShader.setUniform("uTexture0", 0);
+            textShader.setUniform(Uniforms.COLOR, itr.getTextColor());
+
+            Vector2f pos = uiElement.getPosition();
+            font.draw(itr.getText(), pos.x, pos.y, textMesh);
+
+            textMesh.unbind();
+            textShader.unbind();
+        }
     }
 
     private void drawSceneRenderable(ISceneRenderable obj, Camera camera) {

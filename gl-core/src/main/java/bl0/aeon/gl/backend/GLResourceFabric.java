@@ -12,7 +12,8 @@ import bl0.aeon.gl.graphic.GLCharacter;
 import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
-import bl0.aeon.gl.graphic.mesh.GLTextMesh;
+import bl0.aeon.gl.graphic.mesh.ui.UIQuadMesh;
+import bl0.aeon.gl.graphic.mesh.ui.UITextMesh;
 import bl0.aeon.gl.graphic.mesh.VertexAttribute;
 import bl0.aeon.render.common.backend.IResourceFabric;
 import bl0.aeon.render.common.resource.Font;
@@ -269,8 +270,13 @@ public class GLResourceFabric implements IResourceFabric {
     }
 
     @Override
-    public Mesh createFontMesh(String name) {
-        return new GLTextMesh(name);
+    public Mesh createUITextMesh(String name) {
+        return new UITextMesh(name);
+    }
+
+    @Override
+    public Mesh createUIQuadMesh(String name) {
+        return new UIQuadMesh(name);
     }
 
     private static void addVertex(List<Float> list, float x, float y, float z) {

@@ -25,4 +25,13 @@ public class InputUtils {
 
      return keyMapping;
     }
+
+    public static HashMap<Integer, Key> getDefaultMouseMapping(){
+     HashMap<Integer, Key> keyMapping = new HashMap<>();
+
+     keyMapping.put(GLFW.GLFW_MOUSE_BUTTON_LEFT, Key.MOUSE_LEFT);
+     keyMapping.put(GLFW.GLFW_MOUSE_BUTTON_RIGHT, Key.MOUSE_RIGHT);
+
+     return keyMapping;
+    }
 }

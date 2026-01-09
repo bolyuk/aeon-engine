@@ -14,6 +14,7 @@ import bl0.bjs.common.base.IContext;
 import bl0.bjs.common.core.event.action.Action;
 import bl0.bjs.common.core.event.action.ActionController;
 import bl0.bjs.common.core.tuple.Pair;
+import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -27,10 +28,17 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
     private final ActionController<Pair<Integer, Integer>> windowSizeChangedController = new ActionController<>();
 
     private final HashMap<Integer, Key> keyMapping = InputUtils.getDefaultKeyMapping();
+
+    private final HashMap<Integer, Key> mouseMapping = InputUtils.getDefaultMouseMapping();
     private Window window;
     public GLWindowManager(GLState state, IContext ctx) {
         super(state, ctx);
     }
+
+    private final boolean[] mouseDown = new boolean[2];
+    private final Vector2d mPos = new Vector2d();
+    private final Vector2d mdt = new Vector2d();
+    private boolean mouseInitialized = false;
 
     @Override
     public void initialize(String title, int width, int height) {
@@ -104,6 +112,24 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
             windowSizeChangedController.invoke(Pair.of(w, h));
         });
 
+        GLFW.glfwSetCursorPosCallback(window.ID, (win, x, y) -> {
+            if (!mouseInitialized) {
+                mPos.set(x, y);
+                mouseInitialized = true;
+                return;
+            }
+
+            mdt.set(x - mPos.x, y - mPos.y);
+            mPos.set(x, y);
+        });
+
+        GLFW.glfwSetMouseButtonCallback(window.ID, (win, button, action, mods) -> {
+            if (button < 0 || button >= mouseDown.length) return;
+
+            boolean down = (action == GLFW.GLFW_PRESS);
+            mouseDown[button] = down;
+        });
+
         GLFW.glfwSwapInterval(1);
         glState.isContextBound = true;
     }
@@ -122,6 +148,13 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
                 input.keys.add(pair.getValue());
         }
 
+        for(int i=0; i<mouseDown.length; i++) {
+            if(mouseDown[i])
+                input.keys.add(mouseMapping.get(i));
+        }
+
+        input.mdt = mdt;
+        input.mPos = mPos;
         return input.isAnyDown() ? input : null;
     }
 

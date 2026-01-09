@@ -1,14 +1,12 @@
 package bl0.aeon.gl.graphic;
 
 import bl0.aeon.gl.base.GLResource;
-import bl0.aeon.gl.graphic.mesh.GLTextMesh;
+import bl0.aeon.gl.graphic.mesh.ui.UITextMesh;
 import bl0.aeon.render.common.base.IResource;
 import bl0.aeon.render.common.resource.Font;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL33;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -52,7 +50,7 @@ public class GLBitmapFont extends GLResource implements Font {
         return fontSize;
     }
 
-    public void draw(String text, float x, float y, GLTextMesh mesh) {
+    public void draw(String text, float x, float y, UITextMesh mesh) {
         float baseline = y + ascent;
 
         for (int i = 0; i < text.length(); i++) {

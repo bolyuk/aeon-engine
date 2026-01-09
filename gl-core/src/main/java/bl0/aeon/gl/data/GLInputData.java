@@ -2,13 +2,14 @@ package bl0.aeon.gl.data;
 
 import bl0.aeon.render.common.data.input.InputData;
 import bl0.aeon.render.common.data.input.Key;
+import org.joml.Vector2d;
 
 import java.util.ArrayList;
 
 public class GLInputData implements InputData {
     public ArrayList<Key> keys = new  ArrayList<>();
 
-    double mX, mY, mdX, mdY;
+    public Vector2d mPos, mdt;
 
     @Override
     public boolean isKeyDown(Key key) {
@@ -27,21 +28,21 @@ public class GLInputData implements InputData {
 
     @Override
     public double getMouseX() {
-        return mX;
+        return mPos.x;
     }
 
     @Override
     public double getMouseY() {
-        return mY;
+        return mPos.y;
     }
 
     @Override
     public double getMouseDX() {
-        return mdX;
+        return mdt.x;
     }
 
     @Override
     public double getMouseDY() {
-        return mdY;
+        return mdt.y;
     }
 }

@@ -20,5 +20,7 @@ public interface IResourceFabric {
     Texture loadTextureFromPath(String path, String name);
     Texture loadTextureFromResourcePath(String path, String name);
 
-    Mesh createFontMesh(String name);
+    Mesh createUITextMesh(String name);
+
+    Mesh createUIQuadMesh(String name);
 }
