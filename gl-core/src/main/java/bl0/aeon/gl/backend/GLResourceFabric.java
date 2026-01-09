@@ -276,7 +276,7 @@ public class GLResourceFabric implements IResourceFabric {
 
     @Override
     public Mesh createUIQuadMesh(String name) {
-        return new UIQuadMesh(name);
+        return new UIQuadMesh(name, null); //TODO
     }
 
     private static void addVertex(List<Float> list, float x, float y, float z) {

@@ -2,8 +2,6 @@ package bl0.aeon.test;
 
 import bl0.aeon.engine.core.AeonEngine;
 import bl0.aeon.gl.GLBackend;
-import bl0.aeon.gl.backend.GLRenderManager;
-import bl0.aeon.test.scenes.CubeTestScene;
 import bl0.bjs.boot.BJSInitializer;
 import bl0.bjs.common.base.IContext;
 
@@ -14,7 +12,7 @@ public class Main {
         AeonEngine engine = new AeonEngine(ctx, new GLBackend(ctx).get());
         engine.initialize("AEON TEST", 800, 500);
         engine.loadDefaultResources();
-        engine.setScene(new CubeTestScene());
+        engine.setScene(new CubeTest());
         engine.start();
     }
 }
