@@ -12,7 +12,8 @@ public class AE_Transform extends BaseComponent implements Transform {
     public final NotifyObject<Vector3f> position = new NotifyObject<Vector3f>(new Vector3f());
     public final NotifyObject<Vector3f> scale = new NotifyObject<Vector3f>(Vectors.ONE());
     public final NotifyObject<Quaternionf> rotation = new NotifyObject<Quaternionf>(new Quaternionf());
-    public final BoundObject<Matrix4f> matrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> new Matrix4f().translate(this.position.get()).rotate(this.rotation.get()).scale(this.scale.get()), this.position, this.rotation, this.scale);
+
+    public transient final BoundObject<Matrix4f> matrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> new Matrix4f().translate(this.position.get()).rotate(this.rotation.get()).scale(this.scale.get()), this.position, this.rotation, this.scale);
 
     @Override
     public Matrix4f getMatrix(){

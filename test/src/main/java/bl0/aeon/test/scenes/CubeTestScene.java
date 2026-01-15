@@ -1,9 +1,12 @@
 package bl0.aeon.test.scenes;
 
+import bl0.aeon.base.component.Component;
 import bl0.aeon.base.core.IEngineContext;
 import bl0.aeon.base.stage.Stage;
 import bl0.aeon.engine.data.component.AE_Material;
 import bl0.aeon.engine.data.component.AE_Model;
+import bl0.aeon.engine.data.component.AE_Transform;
+import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.fabrics.LightFabric;
 import bl0.aeon.engine.scene.BaseScene;
 import bl0.aeon.render.common.c.Colors;

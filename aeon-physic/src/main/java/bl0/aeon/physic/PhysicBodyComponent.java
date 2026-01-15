@@ -13,7 +13,7 @@ public class PhysicBodyComponent extends BaseComponent implements UpdateConsumer
 
     public Vector3f velocity = new Vector3f();
     public float mass = 1f;
-    public float damping = 1f;
+    public float damping = 0.98f;
 
     private final Vector3f accumulatedForce = new Vector3f();
     public boolean manualControl;

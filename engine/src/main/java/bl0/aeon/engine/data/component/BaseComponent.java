@@ -4,7 +4,7 @@ import bl0.aeon.base.component.Component;
 import bl0.aeon.base.scene.IComponentContainer;
 
 public class BaseComponent implements Component {
-    protected IComponentContainer parent;
+    protected transient IComponentContainer parent;
     protected boolean isEnabled = true;
 
     @Override

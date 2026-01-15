@@ -13,7 +13,7 @@ public class AE_InstancedContainerComponent extends BaseComponent implements Ins
 
     private static final int FLOATS_PER_INSTANCE = 16;
 
-    private FloatBuffer matrices;
+    private transient FloatBuffer matrices;
     private int instanceCount = 0;
     private Material material;
     private Model model;
