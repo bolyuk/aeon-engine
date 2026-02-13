@@ -3,11 +3,10 @@ package bl0.aeon.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.events.ViewPortChangeEvent;
-import bl0.aeon.base.scene.Scene;
-import bl0.aeon.base.scene.SceneObject;
-import bl0.aeon.render.common.data.render.Camera;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.scene.Scene;
+import bl0.aeon.api.scene.SceneObject;
+import bl0.aeon.render.api.data.render.Camera;
 
 public class BaseScene implements Scene {
 

@@ -1,7 +1,7 @@
 package bl0.aeon.engine.data.component;
 
-import bl0.aeon.base.component.Component;
-import bl0.aeon.base.scene.IComponentContainer;
+import bl0.aeon.api.component.Component;
+import bl0.aeon.api.scene.IComponentContainer;
 
 public class BaseComponent implements Component {
     protected IComponentContainer parent;

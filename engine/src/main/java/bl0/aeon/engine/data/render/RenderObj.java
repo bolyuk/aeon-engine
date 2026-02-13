@@ -1,11 +1,11 @@
 package bl0.aeon.engine.data.render;
 
-import bl0.aeon.render.common.data.light.DirectionalLight;
-import bl0.aeon.render.common.data.light.PointLight;
-import bl0.aeon.render.common.data.render.scene.ISingleRenderable;
-import bl0.aeon.render.common.resource.Mesh;
-import bl0.aeon.render.common.resource.ShaderProgram;
-import bl0.aeon.render.common.resource.Texture;
+import bl0.aeon.render.api.data.light.DirectionalLight;
+import bl0.aeon.render.api.data.light.PointLight;
+import bl0.aeon.render.api.data.render.scene.ISingleRenderable;
+import bl0.aeon.render.api.resource.Mesh;
+import bl0.aeon.render.api.resource.ShaderProgram;
+import bl0.aeon.render.api.resource.Texture;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 

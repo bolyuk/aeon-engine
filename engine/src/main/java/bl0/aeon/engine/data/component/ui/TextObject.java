@@ -1,14 +1,14 @@
 package bl0.aeon.engine.data.component.ui;
 
-import bl0.aeon.base.component.graphic.Material;
-import bl0.aeon.base.core.IEngineContext;
+import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.engine.data.component.AE_Material;
-import bl0.aeon.render.common.c.Colors;
-import bl0.aeon.render.common.c.resources.Fonts;
-import bl0.aeon.render.common.c.resources.ShaderPrograms;
-import bl0.aeon.render.common.resource.Font;
-import bl0.aeon.base.component.ui.UITextElement;
-import bl0.aeon.render.common.resource.Mesh;
+import bl0.aeon.render.api.c.Colors;
+import bl0.aeon.render.api.c.resources.Fonts;
+import bl0.aeon.render.api.c.resources.ShaderPrograms;
+import bl0.aeon.render.api.resource.Font;
+import bl0.aeon.api.component.ui.UITextElement;
+import bl0.aeon.render.api.resource.Mesh;
 
 public class TextObject extends BaseUIElement implements UITextElement {
     public String text;

@@ -1,8 +1,8 @@
 package bl0.aeon.framework.components;
 
-import bl0.aeon.base.component.interfaces.UpdateConsumerComponent;
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.core.IFrameContext;
+import bl0.aeon.api.component.interfaces.UpdateConsumerComponent;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.core.IFrameContext;
 import bl0.aeon.engine.data.component.BaseComponent;
 
 // TODO

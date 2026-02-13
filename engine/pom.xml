@@ -19,13 +19,13 @@
     <dependencies>
         <dependency>
             <groupId>bl0.aeon</groupId>
-            <artifactId>render-common</artifactId>
+            <artifactId>render-api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>bl0.aeon</groupId>
-            <artifactId>engine-common</artifactId>
+            <artifactId>engine-api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -38,6 +38,12 @@
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>bl0.aeon</groupId>
+            <artifactId>extension-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

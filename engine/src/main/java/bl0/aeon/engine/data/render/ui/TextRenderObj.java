@@ -1,10 +1,10 @@
 package bl0.aeon.engine.data.render.ui;
 
-import bl0.aeon.base.component.graphic.Material;
-import bl0.aeon.render.common.data.render.ui.ITextRenderable;
-import bl0.aeon.render.common.resource.Font;
-import bl0.aeon.render.common.resource.Mesh;
-import bl0.aeon.render.common.resource.ShaderProgram;
+import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.render.api.data.render.ui.ITextRenderable;
+import bl0.aeon.render.api.resource.Font;
+import bl0.aeon.render.api.resource.Mesh;
+import bl0.aeon.render.api.resource.ShaderProgram;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 

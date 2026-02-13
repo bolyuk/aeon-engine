@@ -1,9 +1,9 @@
 package bl0.aeon.framework.components;
 
-import bl0.aeon.base.component.interfaces.IWindowSizeChangeConsumerComponent;
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.core.IFrameContext;
-import bl0.aeon.base.events.ViewPortChangeEvent;
+import bl0.aeon.api.component.interfaces.IWindowSizeChangeConsumerComponent;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.core.IFrameContext;
+import bl0.aeon.api.events.ViewPortChangeEvent;
 import bl0.aeon.engine.data.component.BaseComponent;
 
 public class CameraSettingsComponent extends BaseComponent

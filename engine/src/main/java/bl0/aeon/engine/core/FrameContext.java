@@ -1,6 +1,6 @@
 package bl0.aeon.engine.core;
 
-import bl0.aeon.base.core.IFrameContext;
+import bl0.aeon.api.core.IFrameContext;
 
 public class FrameContext implements IFrameContext {
     public double deltaTime;

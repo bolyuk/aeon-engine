@@ -1,7 +1,7 @@
 package bl0.aeon.engine.data.component;
 
-import bl0.aeon.base.component.graphic.Transform;
-import bl0.aeon.render.common.c.Vectors;
+import bl0.aeon.api.component.graphic.Transform;
+import bl0.aeon.render.api.c.Vectors;
 import bl0.bjs.common.core.relations.BoundObject;
 import bl0.bjs.common.core.relations.NotifyObject;
 import org.joml.Matrix4f;

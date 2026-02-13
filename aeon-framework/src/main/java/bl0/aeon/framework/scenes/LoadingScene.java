@@ -1,7 +1,7 @@
 package bl0.aeon.framework.scenes;
 
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.stage.Stage;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.stage.Stage;
 import bl0.aeon.engine.data.component.AE_Material;
 import bl0.aeon.engine.data.component.AE_Model;
 import bl0.aeon.engine.data.component.AE_Transform;
@@ -10,11 +10,11 @@ import bl0.aeon.engine.scene.BaseScene;
 import bl0.aeon.framework.components.CameraSettingsComponent;
 import bl0.aeon.framework.components.xyz.BillboardComponent;
 import bl0.aeon.framework.components.xyz.RotatorComponent;
-import bl0.aeon.render.common.base.IDisposable;
-import bl0.aeon.render.common.base.IResource;
-import bl0.aeon.render.common.c.resources.ShaderPrograms;
-import bl0.aeon.render.common.c.resources.Textures;
-import bl0.aeon.render.common.resource.*;
+import bl0.aeon.render.api.base.IDisposable;
+import bl0.aeon.render.api.base.IResource;
+import bl0.aeon.render.api.c.resources.ShaderPrograms;
+import bl0.aeon.render.api.c.resources.Textures;
+import bl0.aeon.render.api.resource.*;
 import org.joml.Vector3f;
 
 public class LoadingScene extends BaseScene {

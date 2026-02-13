@@ -1,9 +1,9 @@
 package bl0.aeon.engine.data.component;
 
-import bl0.aeon.base.component.graphic.Material;
-import bl0.aeon.base.component.graphic.Model;
-import bl0.aeon.base.component.graphic.Transform;
-import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
+import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.api.component.graphic.Model;
+import bl0.aeon.api.component.graphic.Transform;
+import bl0.aeon.api.component.interfaces.InstancesContainerComponent;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 

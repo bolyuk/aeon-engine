@@ -1,15 +1,18 @@
 package bl0.aeon.test.scenes;
 
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.stage.Stage;
+import bl0.aeon.api.component.Component;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.stage.Stage;
 import bl0.aeon.engine.data.component.AE_Material;
 import bl0.aeon.engine.data.component.AE_Model;
+import bl0.aeon.engine.data.component.AE_Transform;
+import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.fabrics.LightFabric;
 import bl0.aeon.engine.scene.BaseScene;
-import bl0.aeon.render.common.c.Colors;
-import bl0.aeon.render.common.c.resources.ShaderPrograms;
-import bl0.aeon.render.common.c.resources.Textures;
-import bl0.aeon.render.common.resource.Texture;
+import bl0.aeon.render.api.c.Colors;
+import bl0.aeon.render.api.c.resources.ShaderPrograms;
+import bl0.aeon.render.api.c.resources.Textures;
+import bl0.aeon.render.api.resource.Texture;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

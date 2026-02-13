@@ -1,6 +1,6 @@
 package bl0.aeon.engine.data.component.light;
 
-import bl0.aeon.render.common.data.light.DirectionalLight;
+import bl0.aeon.render.api.data.light.DirectionalLight;
 import bl0.aeon.engine.data.component.BaseComponent;
 import org.joml.Vector3f;
 

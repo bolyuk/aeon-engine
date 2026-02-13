@@ -1,23 +1,25 @@
 package bl0.aeon.engine.core;
 
-import bl0.aeon.base.component.interfaces.IWindowSizeChangeConsumerComponent;
-import bl0.aeon.base.component.interfaces.InputConsumerComponent;
-import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
-import bl0.aeon.base.component.ui.UIElement;
-import bl0.aeon.base.component.ui.UITextElement;
-import bl0.aeon.base.events.ViewPortChangeEvent;
-import bl0.aeon.base.interfaces.IInputConsumer;
-import bl0.aeon.base.interfaces.IWindowSizeChangeConsumer;
-import bl0.aeon.base.scene.IComponentContainer;
-import bl0.aeon.base.component.graphic.Material;
-import bl0.aeon.base.component.graphic.Model;
-import bl0.aeon.base.component.graphic.Transform;
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.core.IFrameContext;
-import bl0.aeon.base.scene.Scene;
-import bl0.aeon.base.scene.SceneObject;
-import bl0.aeon.base.stage.IDispatcher;
-import bl0.aeon.base.stage.Stage;
+import bl0.aeon.api.component.interfaces.IWindowSizeChangeConsumerComponent;
+import bl0.aeon.api.component.interfaces.InputConsumerComponent;
+import bl0.aeon.api.component.interfaces.InstancesContainerComponent;
+import bl0.aeon.api.component.ui.UIElement;
+import bl0.aeon.api.component.ui.UITextElement;
+import bl0.aeon.api.core.GameInfo;
+import bl0.aeon.api.events.ViewPortChangeEvent;
+import bl0.aeon.api.extension.Extension;
+import bl0.aeon.api.interfaces.IInputConsumer;
+import bl0.aeon.api.interfaces.IWindowSizeChangeConsumer;
+import bl0.aeon.api.scene.IComponentContainer;
+import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.api.component.graphic.Model;
+import bl0.aeon.api.component.graphic.Transform;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.core.IFrameContext;
+import bl0.aeon.api.scene.Scene;
+import bl0.aeon.api.scene.SceneObject;
+import bl0.aeon.api.stage.IDispatcher;
+import bl0.aeon.api.stage.Stage;
 import bl0.aeon.engine.Dispatcher;
 import bl0.aeon.engine.ResourceManager;
 import bl0.aeon.engine.data.ActionTags;
@@ -28,19 +30,19 @@ import bl0.aeon.engine.data.component.light.AE_PointLight;
 import bl0.aeon.engine.data.render.ui.TextRenderObj;
 import bl0.aeon.engine.data.render.ui.UIRenderObj;
 import bl0.aeon.engine.scene.BaseScene;
-import bl0.aeon.render.common.backend.BackendContainer;
-import bl0.aeon.render.common.c.resources.Fonts;
-import bl0.aeon.render.common.c.resources.Meshes;
-import bl0.aeon.render.common.c.resources.ShaderPrograms;
-import bl0.aeon.render.common.c.resources.Textures;
-import bl0.aeon.render.common.backend.IResourceFabric;
-import bl0.aeon.base.core.IResourceManager;
-import bl0.aeon.render.common.data.render.RenderFrame;
-import bl0.aeon.render.common.data.input.InputData;
-import bl0.aeon.render.common.data.input.Key;
-import bl0.aeon.render.common.data.light.DirectionalLight;
-import bl0.aeon.render.common.data.light.PointLight;
-import bl0.aeon.render.common.data.render.IRenderable;
+import bl0.aeon.render.api.backend.BackendContainer;
+import bl0.aeon.render.api.c.resources.Fonts;
+import bl0.aeon.render.api.c.resources.Meshes;
+import bl0.aeon.render.api.c.resources.ShaderPrograms;
+import bl0.aeon.render.api.c.resources.Textures;
+import bl0.aeon.render.api.backend.IResourceFabric;
+import bl0.aeon.api.core.IResourceManager;
+import bl0.aeon.render.api.data.render.RenderFrame;
+import bl0.aeon.render.api.data.input.InputData;
+import bl0.aeon.render.api.data.input.Key;
+import bl0.aeon.render.api.data.light.DirectionalLight;
+import bl0.aeon.render.api.data.light.PointLight;
+import bl0.aeon.render.api.data.render.IRenderable;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
 import bl0.bjs.common.core.tuple.Pair;
@@ -53,17 +55,21 @@ import java.util.List;
 
 public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
-    private final BackendContainer backend;
     private final IResourceManager resourceManager;
-
     private final Dispatcher dispatcher;
+    private final FrameContext fCtx = new FrameContext();
+    private final GameInfo gameInfo;
+
+    private BackendContainer backend;
     private Scene scene;
 
     private final Object lock = new Object();
 
-    private final FrameContext fCtx = new FrameContext();
+
     private double lastTime = 0;
     private boolean isRunning = true;
+
+    private ArrayList<Extension> extensions = new ArrayList<>();
 
     private int fpsLimit = 60;
 
@@ -71,13 +77,11 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private long sysKeyDelay = 300;
 
-    public AeonEngine(IContext ctx, BackendContainer backend) {
+    public AeonEngine(IContext ctx, GameInfo info) {
         super(ctx);
-        this.backend = backend;
+        this.gameInfo = info;
         this.resourceManager = new ResourceManager(ctx);
         this.dispatcher = new Dispatcher();
-        backend.getWindowManager().setOnWindowSizeChangedListener(this::winChanged);
-        regEvents();
     }
 
     private void regEvents() {
@@ -113,13 +117,30 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         });
     }
 
-    public void initialize(String title, int w, int h){
+    public void setGraphicBackend(BackendContainer backend) {
+        this.backend = backend;
+        backend.getWindowManager().setOnWindowSizeChangedListener(this::winChanged);
+        regEvents();
+    }
+
+    public void initialize(int w, int h){
         printLogo();
         var winManager = backend.getWindowManager();
-        winManager.initialize(title, w, h);
+        winManager.initialize(gameInfo.name, w, h);
         winManager.bindContext();
         fCtx.height = h;
         fCtx.width = w;
+
+        for(var e : extensions)
+            e.initialize();
+    }
+
+    public void addExtension(Class<? extends Extension> extensionClass){
+        try {
+            extensions.add(extensionClass.getConstructor(IEngineContext.class).newInstance(this));
+        } catch (Exception e) {
+            l.err("addExtension extension class " + extensionClass.getName() + " failed", e);
+        }
     }
     
     private void printLogo(){
@@ -385,6 +406,11 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
             scene.getCamera().setAspectRatio((float)fCtx.width/fCtx.height);
         }
+    }
+
+    @Override
+    public GameInfo getInfo() {
+        return gameInfo;
     }
 
     @Override

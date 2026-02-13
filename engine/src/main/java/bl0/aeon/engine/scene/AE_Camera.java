@@ -1,6 +1,6 @@
 package bl0.aeon.engine.scene;
 
-import bl0.aeon.render.common.data.render.Camera;
+import bl0.aeon.render.api.data.render.Camera;
 import bl0.bjs.common.core.relations.BoundObject;
 import bl0.bjs.common.core.relations.NotifyObject;
 import org.joml.Matrix4f;

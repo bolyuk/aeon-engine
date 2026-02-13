@@ -1,14 +1,14 @@
 package bl0.aeon.engine.data.component.ui;
 
-import bl0.aeon.base.component.graphic.Material;
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.core.IFrameContext;
-import bl0.aeon.base.scene.SceneObject;
+import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.core.IFrameContext;
+import bl0.aeon.api.scene.SceneObject;
 import bl0.aeon.engine.data.component.AE_Material;
-import bl0.aeon.render.common.c.resources.ShaderPrograms;
-import bl0.aeon.render.common.resource.Mesh;
-import bl0.aeon.base.component.ui.UIContainer;
-import bl0.aeon.base.component.ui.UIElement;
+import bl0.aeon.render.api.c.resources.ShaderPrograms;
+import bl0.aeon.render.api.resource.Mesh;
+import bl0.aeon.api.component.ui.UIContainer;
+import bl0.aeon.api.component.ui.UIElement;
 import bl0.bjs.common.core.event.action.Action;
 import org.joml.Vector2f;
 

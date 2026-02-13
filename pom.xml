@@ -10,13 +10,14 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>gl-core</module>
-        <module>render-common</module>
+        <module>render-opengl</module>
+        <module>render-api</module>
         <module>engine</module>
-        <module>engine-common</module>
+        <module>engine-api</module>
         <module>test</module>
         <module>aeon-framework</module>
         <module>aeon-physic</module>
+        <module>extension-api</module>
     </modules>
 
     <properties>

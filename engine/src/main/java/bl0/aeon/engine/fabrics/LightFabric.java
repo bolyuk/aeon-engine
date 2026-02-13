@@ -1,8 +1,8 @@
 package bl0.aeon.engine.fabrics;
 
-import bl0.aeon.render.common.data.light.DirectionalLight;
-import bl0.aeon.render.common.data.light.PointLight;
-import bl0.aeon.render.common.c.Vectors;
+import bl0.aeon.render.api.data.light.DirectionalLight;
+import bl0.aeon.render.api.data.light.PointLight;
+import bl0.aeon.render.api.c.Vectors;
 import bl0.aeon.engine.data.component.light.AE_DirectionalLight;
 import bl0.aeon.engine.data.component.light.AE_PointLight;
 import org.joml.Vector3f;

@@ -1,9 +1,9 @@
 package bl0.aeon.engine;
 
-import bl0.aeon.base.exception.ResourceException;
-import bl0.aeon.render.common.base.IResource;
-import bl0.aeon.base.core.IResourceManager;
-import bl0.aeon.render.common.base.IDisposable;
+import bl0.aeon.api.exception.ResourceException;
+import bl0.aeon.render.api.base.IResource;
+import bl0.aeon.api.core.IResourceManager;
+import bl0.aeon.render.api.base.IDisposable;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
 

@@ -1,11 +1,10 @@
 package bl0.aeon.physic;
 
-import bl0.aeon.base.component.graphic.Transform;
-import bl0.aeon.base.component.interfaces.UpdateConsumerComponent;
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.core.IFrameContext;
+import bl0.aeon.api.component.graphic.Transform;
+import bl0.aeon.api.component.interfaces.UpdateConsumerComponent;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.core.IFrameContext;
 import bl0.aeon.engine.data.component.BaseComponent;
-import bl0.aeon.render.common.c.Vectors;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

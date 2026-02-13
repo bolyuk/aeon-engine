@@ -1,12 +1,12 @@
 package bl0.aeon.framework.components.xyz;
 
-import bl0.aeon.base.component.graphic.Material;
-import bl0.aeon.base.component.graphic.Model;
-import bl0.aeon.base.component.graphic.Transform;
-import bl0.aeon.base.component.interfaces.InstancesContainerComponent;
-import bl0.aeon.base.component.interfaces.UpdateConsumerComponent;
-import bl0.aeon.base.core.IEngineContext;
-import bl0.aeon.base.core.IFrameContext;
+import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.api.component.graphic.Model;
+import bl0.aeon.api.component.graphic.Transform;
+import bl0.aeon.api.component.interfaces.InstancesContainerComponent;
+import bl0.aeon.api.component.interfaces.UpdateConsumerComponent;
+import bl0.aeon.api.core.IEngineContext;
+import bl0.aeon.api.core.IFrameContext;
 import bl0.aeon.engine.data.component.BaseComponent;
 import org.joml.Matrix4f;
 import org.joml.Random;
