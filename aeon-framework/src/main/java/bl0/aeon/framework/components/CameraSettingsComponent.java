@@ -16,7 +16,7 @@ public class CameraSettingsComponent extends BaseComponent
     public void onWindowSizeChange(IEngineContext eCtx) {
         IFrameContext fCtx = eCtx.getFrameContext();
 
-        float windowAspect = (float) fCtx.getWidth() / fCtx.getHeight();
+        float windowAspect = fCtx.sizeProperty().getAspectRatio();
         float usedAspect = windowAspect;
 
         if (windowAspect < minAspect) {
@@ -30,7 +30,7 @@ public class CameraSettingsComponent extends BaseComponent
 
         eCtx.getEventBus()
                 .getController(ViewPortChangeEvent.class)
-                .fireEvent(new ViewPortChangeEvent.VPCEPayload(fCtx.getWidth(), fCtx.getHeight(), usedAspect));
+                .fireEvent(new ViewPortChangeEvent.VPCEPayload((int)fCtx.sizeProperty().x(), (int)fCtx.sizeProperty().y(), usedAspect));
     }
 }
 

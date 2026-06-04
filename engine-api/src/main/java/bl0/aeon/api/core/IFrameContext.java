@@ -1,9 +1,10 @@
 package bl0.aeon.api.core;
 
+import bl0.aeon.api.scene.properties.Vector2fProperty;
+
 public interface IFrameContext {
     double getDeltaTime();
-    int getWidth();
-    int getHeight();
+    Vector2fProperty sizeProperty();
 
     double getFPS();
 }

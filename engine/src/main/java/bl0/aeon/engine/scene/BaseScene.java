@@ -3,12 +3,17 @@ package bl0.aeon.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
+import bl0.aeon.api.component.ui.UIContainer;
+import bl0.aeon.api.component.ui.UIElement;
 import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.api.scene.Scene;
 import bl0.aeon.api.scene.SceneObject;
+import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.render.api.data.render.Camera;
 
-public class BaseScene implements Scene {
+public class BaseScene implements Scene, UIContainer {
+
+    public final Vector2fProperty sizeProperty = new Vector2fProperty();
 
     protected ArrayList<SceneObject> entities = new ArrayList();
     protected Camera camera = new AE_Camera();
@@ -24,13 +29,13 @@ public class BaseScene implements Scene {
 
     public void onShowed(IEngineContext ctx) {
         this.eCtx = ctx;
-        int width = ctx.getFrameContext().getWidth();
-        int height = ctx.getFrameContext().getHeight();
-        camera.setAspectRatio(width/height);
+        camera.setAspectRatio(ctx.getFrameContext().sizeProperty().getAspectRatio());
+        sizeProperty.bind(ctx.getFrameContext().sizeProperty());;
     }
 
     public void onHided(IEngineContext ctx) {
         this.eCtx = null;
+        sizeProperty.unbind(ctx.getFrameContext().sizeProperty());;
     }
 
     @Override
@@ -46,11 +51,23 @@ public class BaseScene implements Scene {
     @Override
     public void add(SceneObject sceneObject) {
         entities.add(sceneObject);
+        if(sceneObject instanceof UIElement uie)
+            uie.setParent(this);
     }
 
     @Override
     public void remove(SceneObject sceneObject) {
         entities.remove(sceneObject);
+    }
+
+    @Override
+    public List<UIElement> getUIElements() {
+        return null;
+    }
+
+    @Override
+    public Vector2fProperty sizeProperty() {
+        return sizeProperty;
     }
 }
 

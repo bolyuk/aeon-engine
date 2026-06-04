@@ -4,7 +4,7 @@ import bl0.aeon.api.component.graphic.Material;
 import bl0.aeon.render.api.resource.Font;
 import bl0.aeon.render.api.resource.Mesh;
 
-public interface UITextElement extends UIElement {
+public interface UITextElement extends UIDrawableElement {
     String getText();
     Font getFont();
     Material getTextMaterial();

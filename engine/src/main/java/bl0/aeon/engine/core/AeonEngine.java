@@ -3,7 +3,7 @@ package bl0.aeon.engine.core;
 import bl0.aeon.api.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.api.component.interfaces.InputConsumerComponent;
 import bl0.aeon.api.component.interfaces.InstancesContainerComponent;
-import bl0.aeon.api.component.ui.UIElement;
+import bl0.aeon.api.component.ui.UIDrawableElement;
 import bl0.aeon.api.component.ui.UITextElement;
 import bl0.aeon.api.core.GameInfo;
 import bl0.aeon.api.events.ViewPortChangeEvent;
@@ -91,8 +91,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private void vpcheListener(ViewPortChangeEvent.VPCEPayload VPCEPayload) {
         dispatcher.dispatchUnique(Stage.SYSTEM, ActionTags.WIN_RESIZE_CALLBACK_TAG ,(c) -> {
-            this.fCtx.width = VPCEPayload.width();
-            this.fCtx.height = VPCEPayload.height();
+            this.fCtx.size.set(VPCEPayload.width(),VPCEPayload.height());
             backend.getWindowManager().changeViewPort(VPCEPayload.width(), VPCEPayload.height(), VPCEPayload.aspectRatio());
         });
     }
@@ -103,8 +102,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private void enqueueWinSizeChange(Pair<Integer, Integer> wh) {
         dispatcher.dispatchUnique(Stage.BEFORE_SCENE_UPDATE, ActionTags.WIN_RESIZE_TAG, (eCtx) -> {
-            this.fCtx.width = wh.first;
-            this.fCtx.height = wh.second;
+            fCtx.size.set(wh.first, wh.second);
             if(scene == null) return;
             for(var so : scene.getSceneObjects()){
                 if(so instanceof IComponentContainer ico)
@@ -128,8 +126,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         var winManager = backend.getWindowManager();
         winManager.initialize(gameInfo.name, w, h);
         winManager.bindContext();
-        fCtx.height = h;
-        fCtx.width = w;
+        fCtx.size.set(w, h);
 
         for(var e : extensions)
             e.initialize();
@@ -323,7 +320,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                         itr.getText(),
                         itr.getTextMaterial(),
                         itr.getTextMesh()));
-            } else if(so instanceof UIElement iur){
+            } else if(so instanceof UIDrawableElement iur){
                 prepared.add(new UIRenderObj(iur.getPosition(),
                         iur.getSize(),
                         iur.getMaterial(),
@@ -366,8 +363,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
         backend.getRenderEngine().render(new RenderFrame(scene.getCamera(),
                 prepared,
-                getFrameContext().getWidth(),
-                getFrameContext().getHeight()));
+                (int)getFrameContext().sizeProperty().x(),
+                (int)getFrameContext().sizeProperty().y()));
     }
 
     private void onUpdate() {
@@ -404,7 +401,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             if(scene instanceof BaseScene bs)
                 bs.onShowed(this);
 
-            scene.getCamera().setAspectRatio((float)fCtx.width/fCtx.height);
+            scene.getCamera().setAspectRatio(fCtx.size.getAspectRatio());
         }
     }
 

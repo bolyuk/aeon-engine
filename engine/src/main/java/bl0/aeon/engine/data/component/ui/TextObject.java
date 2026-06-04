@@ -9,9 +9,11 @@ import bl0.aeon.render.api.c.resources.ShaderPrograms;
 import bl0.aeon.render.api.resource.Font;
 import bl0.aeon.api.component.ui.UITextElement;
 import bl0.aeon.render.api.resource.Mesh;
+import bl0.bjs.common.core.relations.ObservableObject;
+import bl0.bjs.common.core.relations.v2.xtra.StringProperty;
 
 public class TextObject extends BaseUIElement implements UITextElement {
-    public String text;
+    public final StringProperty text = new StringProperty();
     public Font font;
     public Material textMaterial = new AE_Material();
     public Mesh textMesh;
@@ -30,7 +32,7 @@ public class TextObject extends BaseUIElement implements UITextElement {
 
     @Override
     public String getText() {
-        return text;
+        return text.get();
     }
 
     @Override

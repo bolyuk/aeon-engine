@@ -1,23 +1,27 @@
 package bl0.aeon.engine.data.component.ui;
 
 import bl0.aeon.api.component.graphic.Material;
+import bl0.aeon.api.component.ui.UIDrawableElement;
 import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.api.core.IFrameContext;
 import bl0.aeon.api.scene.SceneObject;
 import bl0.aeon.engine.data.component.AE_Material;
+import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.render.api.c.resources.ShaderPrograms;
 import bl0.aeon.render.api.resource.Mesh;
 import bl0.aeon.api.component.ui.UIContainer;
-import bl0.aeon.api.component.ui.UIElement;
 import bl0.bjs.common.core.event.action.Action;
 import org.joml.Vector2f;
 
-public class BaseUIElement extends SceneObject implements UIElement {
+public class BaseUIElement extends SceneObject implements UIDrawableElement {
     private UIContainer parent;
     private boolean isEnabled = true;
 
-    public Vector2f pos = new Vector2f();
-    public Vector2f size = new Vector2f();
+    public final Vector2fProperty pos = new Vector2fProperty();
+    public final Vector2fProperty size = new Vector2fProperty();
+
+    public Alignment verticalAlignment = null;
+    public Alignment horizontalAlignment = null;
 
     public Action<Void> action = null;
 
@@ -46,12 +50,12 @@ public class BaseUIElement extends SceneObject implements UIElement {
 
     @Override
     public Vector2f getPosition() {
-        return pos;
+        return pos.get();
     }
 
     @Override
     public Vector2f getSize() {
-        return size;
+        return size.get();
     }
 
     @Override
@@ -82,6 +86,11 @@ public class BaseUIElement extends SceneObject implements UIElement {
 
     @Override
     public void update(IFrameContext fCtx, IEngineContext eCtx) {
+        recalculatePosition();
+    }
 
+    protected void recalculatePosition() {
+        if (verticalAlignment == null && horizontalAlignment == null && parent == null)
+            return;
     }
 }

@@ -14,9 +14,6 @@ public interface UIElement extends IClickable, IName {
 
     Vector2f getPosition();
     Vector2f getSize();
-    Material getMaterial();
-
-    Mesh getMesh();
 
     boolean isEnabled();
     void setEnabled(boolean enabled);

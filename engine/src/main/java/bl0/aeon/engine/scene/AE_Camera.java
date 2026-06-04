@@ -1,27 +1,27 @@
 package bl0.aeon.engine.scene;
 
 import bl0.aeon.render.api.data.render.Camera;
-import bl0.bjs.common.core.relations.BoundObject;
-import bl0.bjs.common.core.relations.NotifyObject;
+import bl0.bjs.common.core.relations.FactorizedObject;
+import bl0.bjs.common.core.relations.ObservableObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class AE_Camera implements Camera {
-    public final NotifyObject<Vector3f> position = new NotifyObject<Vector3f>(new Vector3f(0.0f, 0.0f, 5.0f));
-    public final NotifyObject<Vector3f> direction = new NotifyObject<Vector3f>(new Vector3f(0.0f, 0.0f, -1.0f));
-    public final NotifyObject<Vector3f> up = new NotifyObject<Vector3f>(new Vector3f(0.0f, 1.0f, 0.0f));
-    public NotifyObject<Float> aspectRatio = new NotifyObject<Float>(1.3333334f);
+    public final ObservableObject<Vector3f> position = new ObservableObject<Vector3f>(new Vector3f(0.0f, 0.0f, 5.0f));
+    public final ObservableObject<Vector3f> direction = new ObservableObject<Vector3f>(new Vector3f(0.0f, 0.0f, -1.0f));
+    public final ObservableObject<Vector3f> up = new ObservableObject<Vector3f>(new Vector3f(0.0f, 1.0f, 0.0f));
+    public ObservableObject<Float> aspectRatio = new ObservableObject<Float>(1.3333334f);
 
-    public BoundObject<Matrix4f> viewMatrix = new BoundObject<Matrix4f>(new Matrix4f(), (e) -> {
+    public FactorizedObject<Matrix4f> viewMatrix = new FactorizedObject<Matrix4f>(new Matrix4f(), (e) -> {
         Vector3f target = new Vector3f();
         this.position.get().add(this.direction.get(), target);
         return new Matrix4f().lookAt(this.position.get(), target, this.up.get());
     }, this.position, this.direction, this.up);
 
-    public final NotifyObject<Float> fov = new NotifyObject<>(60.0f);
+    public final ObservableObject<Float> fov = new ObservableObject<>(60.0f);
 
-    public BoundObject<Matrix4f> projectionMatrix =
-            new BoundObject<>(new Matrix4f(),
+    public FactorizedObject<Matrix4f> projectionMatrix =
+            new FactorizedObject<>(new Matrix4f(),
                     e -> new Matrix4f().perspective((float) Math.toRadians(this.fov.get()),
                             this.aspectRatio.get(), 0.1f, 1000.0f),
                     this.aspectRatio, this.fov);
