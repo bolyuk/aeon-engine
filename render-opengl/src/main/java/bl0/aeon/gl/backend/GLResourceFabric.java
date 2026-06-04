@@ -203,16 +203,15 @@ public class GLResourceFabric implements IResourceFabric {
     @Override
     public Mesh createPlane(String name) {
         float[] v = {
-                // pos              // normal       // uv
-                -0.5f,-0.5f, 0.0f,  0, 0, 1,       0, 0,
-                0.5f,-0.5f, 0.0f,  0, 0, 1,       1, 0,
-                0.5f, 0.5f, 0.0f,  0, 0, 1,       1, 1,
+                // pos            // normal      // uv
+                -0.5f, 0.0f,-0.5f,  0,1,0,        0,0,
+                0.5f, 0.0f,-0.5f,  0,1,0,        1,0,
+                0.5f, 0.0f, 0.5f,  0,1,0,        1,1,
 
-                0.5f, 0.5f, 0.0f,  0, 0, 1,       1, 1,
-                -0.5f, 0.5f, 0.0f,  0, 0, 1,       0, 1,
-                -0.5f,-0.5f, 0.0f,  0, 0, 1,       0, 0,
+                0.5f, 0.0f, 0.5f,  0,1,0,        1,1,
+                -0.5f, 0.0f, 0.5f,  0,1,0,        0,1,
+                -0.5f, 0.0f,-0.5f,  0,1,0,        0,0
         };
-
         List<VertexAttribute> attr = List.of(new VertexAttribute(3), new VertexAttribute(3), new VertexAttribute(2));
         return new GLMesh(v, attr, name);
     }
