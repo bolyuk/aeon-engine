@@ -66,12 +66,18 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
                 ui.add(obj);
         }
 
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        if(!ui.isEmpty()) {
+            GL11.glDisable(GL11.GL_CULL_FACE);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        for(IUIRenderable uiElement : ui)
-            drawUIElement(uiElement, rFrame.framebufferWidth(), rFrame.framebufferHeight());
+            for (IUIRenderable uiElement : ui)
+                drawUIElement(uiElement, rFrame.framebufferWidth(), rFrame.framebufferHeight());
 
-        GL11.glEnable(GL11.GL_CULL_FACE);
+            GL11.glEnable(GL11.GL_CULL_FACE);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
+        }
     }
 
     private void drawUIElement(IUIRenderable uiElement, int w, int h) {

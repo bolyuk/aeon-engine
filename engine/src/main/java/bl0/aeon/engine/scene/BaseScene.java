@@ -10,10 +10,12 @@ import bl0.aeon.api.scene.Scene;
 import bl0.aeon.api.scene.SceneObject;
 import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.render.api.data.render.Camera;
+import org.joml.Vector2f;
 
 public class BaseScene implements Scene, UIContainer {
 
     public final Vector2fProperty sizeProperty = new Vector2fProperty();
+    private final Vector2fProperty positionProperty = new Vector2fProperty();
 
     protected ArrayList<SceneObject> entities = new ArrayList();
     protected Camera camera = new AE_Camera();
@@ -68,6 +70,42 @@ public class BaseScene implements Scene, UIContainer {
     @Override
     public Vector2fProperty sizeProperty() {
         return sizeProperty;
+    }
+
+
+    @Override
+    public Vector2f getSize() {
+        return sizeProperty.get();
+    }
+
+    @Override
+    public UIContainer getParent() {
+        return null; //TODO
+    }
+
+    @Override
+    public void setParent(UIContainer parent) {
+
+    }
+
+    @Override
+    public Vector2f getPosition() {
+        return positionProperty.get();
+    }
+
+    @Override
+    public Vector2fProperty positionProperty() {
+        return positionProperty;
+    }
+
+    @Override
+    public void onClick() {
+        //TODO
+    }
+
+    @Override
+    public String getName() {
+        return "_SCENE";
     }
 }
 

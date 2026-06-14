@@ -3,7 +3,9 @@ package bl0.aeon.engine.core;
 import bl0.aeon.api.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.api.component.interfaces.InputConsumerComponent;
 import bl0.aeon.api.component.interfaces.InstancesContainerComponent;
+import bl0.aeon.api.component.ui.UIContainer;
 import bl0.aeon.api.component.ui.UIDrawableElement;
+import bl0.aeon.api.component.ui.UIElement;
 import bl0.aeon.api.component.ui.UITextElement;
 import bl0.aeon.api.core.GameInfo;
 import bl0.aeon.api.events.ViewPortChangeEvent;
@@ -311,21 +313,16 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             }
 
             // UI
-            if(so instanceof UITextElement itr){
-                prepared.add(new TextRenderObj(itr.getPosition(),
-                        itr.getSize(),
-                        itr.getMaterial(),
-                        itr.getMesh(),
-                        itr.getFont(),
-                        itr.getText(),
-                        itr.getTextMaterial(),
-                        itr.getTextMesh()));
-            } else if(so instanceof UIDrawableElement iur){
-                prepared.add(new UIRenderObj(iur.getPosition(),
-                        iur.getSize(),
-                        iur.getMaterial(),
-                        iur.getMesh()));
+            if(so instanceof UIContainer uiContainer){
+                prepUIElement(uiContainer, prepared);
+                for (var element : uiContainer.getUIElements()){
+                    prepUIElement(element, prepared);
+                }
+            } else if(so instanceof UIElement uiElement){
+                prepUIElement(uiElement, prepared);
             }
+
+
 
 
             if (!(so instanceof IComponentContainer c)) continue;
@@ -365,6 +362,24 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                 prepared,
                 (int)getFrameContext().sizeProperty().x(),
                 (int)getFrameContext().sizeProperty().y()));
+    }
+
+    private void prepUIElement(UIElement element, ArrayList<IRenderable> prepared) {
+        if(element instanceof UITextElement itr){
+            prepared.add(new TextRenderObj(itr.getPosition(),
+                    itr.getSize(),
+                    itr.getMaterial(),
+                    itr.getMesh(),
+                    itr.getFont(),
+                    itr.getText(),
+                    itr.getTextMaterial(),
+                    itr.getTextMesh()));
+        } else if(element instanceof UIDrawableElement iur){
+            prepared.add(new UIRenderObj(iur.getPosition(),
+                    iur.getSize(),
+                    iur.getMaterial(),
+                    iur.getMesh()));
+        }
     }
 
     private void onUpdate() {

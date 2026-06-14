@@ -90,7 +90,6 @@ public class UIQuadMesh extends GLResource implements IBindable, Mesh {
 
     @Override
     public IResource makeCopy(String name) {
-        // копия ок, но vb тебе надо будет передать снаружи (или выделять новый)
         throw new UnsupportedOperationException("UIQuadMesh copy requires external FloatBuffer");
     }
 }

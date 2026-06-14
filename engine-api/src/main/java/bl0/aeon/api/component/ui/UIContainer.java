@@ -4,7 +4,6 @@ import bl0.aeon.api.scene.properties.Vector2fProperty;
 
 import java.util.List;
 
-public interface UIContainer {
+public interface UIContainer extends UIElement {
     List<UIElement> getUIElements();
-    Vector2fProperty sizeProperty();
 }

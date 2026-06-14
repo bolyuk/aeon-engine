@@ -2,6 +2,7 @@ package bl0.aeon.gl.backend;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -275,7 +276,8 @@ public class GLResourceFabric implements IResourceFabric {
 
     @Override
     public Mesh createUIQuadMesh(String name) {
-        return new UIQuadMesh(name, null); //TODO
+        FloatBuffer vb = BufferUtils.createByteBuffer(24 * Float.BYTES).asFloatBuffer();
+        return new UIQuadMesh(name, vb);
     }
 
     private static void addVertex(List<Float> list, float x, float y, float z) {
