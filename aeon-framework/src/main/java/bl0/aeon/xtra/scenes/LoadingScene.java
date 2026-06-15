@@ -1,4 +1,4 @@
-package bl0.aeon.framework.scenes;
+package bl0.aeon.xtra.scenes;
 
 import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.api.stage.Stage;
@@ -7,9 +7,9 @@ import bl0.aeon.engine.data.component.AE_Model;
 import bl0.aeon.engine.data.component.AE_Transform;
 import bl0.aeon.engine.data.scene.Entity;
 import bl0.aeon.engine.scene.BaseScene;
-import bl0.aeon.framework.components.CameraSettingsComponent;
-import bl0.aeon.framework.components.xyz.BillboardComponent;
-import bl0.aeon.framework.components.xyz.RotatorComponent;
+import bl0.aeon.xtra.components.CameraSettingsComponent;
+import bl0.aeon.xtra.components.xyz.BillboardComponent;
+import bl0.aeon.xtra.components.xyz.RotatorComponent;
 import bl0.aeon.render.api.base.IDisposable;
 import bl0.aeon.render.api.base.IResource;
 import bl0.aeon.render.api.c.resources.ShaderPrograms;

@@ -7,6 +7,8 @@ public final class Uniforms {
     public static final String MODEL = "model";
     public static final String POSITION = "position";
     public static final String DIRECTION = "direction";
+    public static final String ROTATION = "uRotation";
+    public static final String ORIGIN = "uOrigin";
 
     private static String getARR(String POINTER) {
         return POINTER + "["+Placeholders.INDEX+"]";

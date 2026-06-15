@@ -10,6 +10,7 @@ import bl0.aeon.gl.base.IBindable;
 import bl0.aeon.gl.base.CoreException;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -44,6 +45,11 @@ public class GLShaderProgram extends GLResource implements IBindable, ShaderProg
         }
     }
 
+    public void setUniform(String name, Quaternionf value){
+        name = this.replacePlaceHolders(name);
+        GL30.glUniform4f(this.getUniformLocation(name), value.x, value.y, value.z, value.w);
+    }
+
     public void setUniform(String name, int value) {
         name = this.replacePlaceHolders(name);
         GL30.glUniform1i(this.getUniformLocation(name), value);
@@ -52,6 +58,11 @@ public class GLShaderProgram extends GLResource implements IBindable, ShaderProg
     public void setUniform(String name, float value) {
         name = this.replacePlaceHolders(name);
         GL30.glUniform1f(this.getUniformLocation(name), value);
+    }
+
+    public void setUniform(String name, float value1, float value2) {
+        name = this.replacePlaceHolders(name);
+        GL30.glUniform2f(this.getUniformLocation(name), value1, value2);
     }
 
     public void setUniform(String name, Vector3f value) {

@@ -8,8 +8,10 @@ import bl0.aeon.api.component.ui.UIElement;
 import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.api.scene.Scene;
 import bl0.aeon.api.scene.SceneObject;
+import bl0.aeon.api.scene.properties.QuaternionfProperty;
 import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.render.api.data.render.Camera;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 
 public class BaseScene implements Scene, UIContainer {
@@ -70,6 +72,16 @@ public class BaseScene implements Scene, UIContainer {
     @Override
     public Vector2fProperty sizeProperty() {
         return sizeProperty;
+    }
+
+    @Override
+    public Quaternionf getRotation() {
+        return null;
+    }
+
+    @Override
+    public QuaternionfProperty rotationProperty() {
+        return null;
     }
 
 

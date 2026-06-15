@@ -4,6 +4,7 @@ import bl0.aeon.api.component.graphic.Material;
 import bl0.aeon.render.api.data.render.ui.IUIRenderable;
 import bl0.aeon.render.api.resource.Mesh;
 import bl0.aeon.render.api.resource.ShaderProgram;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -11,12 +12,14 @@ public class UIRenderObj implements IUIRenderable {
     private final Vector2f position;
     private final Vector2f size;
     private final Vector4f color;
+    private final Quaternionf rotation;
     private final Mesh mesh;
     private final ShaderProgram shader;
 
-    public UIRenderObj(Vector2f position, Vector2f size, Material material, Mesh mesh) {
+    public UIRenderObj(Vector2f position, Vector2f size, Quaternionf rotation, Material material, Mesh mesh) {
         this.position = position;
         this.size = size;
+        this.rotation = rotation;
         this.color = material.getColor();
         this.mesh = mesh;
         this.shader = material.getShaderProgram();
@@ -30,6 +33,11 @@ public class UIRenderObj implements IUIRenderable {
     @Override
     public Vector2f getSize() {
         return size;
+    }
+
+    @Override
+    public Quaternionf getRotation() {
+        return rotation;
     }
 
     @Override

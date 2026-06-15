@@ -5,6 +5,7 @@ import bl0.aeon.api.component.ui.UIDrawableElement;
 import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.api.core.IFrameContext;
 import bl0.aeon.api.scene.SceneObject;
+import bl0.aeon.api.scene.properties.QuaternionfProperty;
 import bl0.aeon.engine.data.component.AE_Material;
 import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.engine.data.component.ui.props.HorizontalAlignment;
@@ -13,13 +14,18 @@ import bl0.aeon.render.api.c.resources.ShaderPrograms;
 import bl0.aeon.render.api.resource.Mesh;
 import bl0.aeon.api.component.ui.UIContainer;
 import bl0.bjs.common.core.event.action.Action;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 
 public class BaseUIElement extends SceneObject implements UIDrawableElement {
     private UIContainer parent;
 
+    protected Vector2f baseSize = new Vector2f();
+
     public final Vector2fProperty pos = new Vector2fProperty();
     public final Vector2fProperty size = new Vector2fProperty();
+
+    public final QuaternionfProperty rotation = new QuaternionfProperty();
 
     public VerticalAlignment verticalAlignment = null;
     public HorizontalAlignment horizontalAlignment = null;
@@ -34,6 +40,7 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
         mesh = eCtx.getResourceFabric().createUIQuadMesh(name+"_mesh");
         material.setShaderProgram(eCtx.getResourceManager().getResource(ShaderPrograms.UI_SOLID));
         size.addListener(this::recalculatePosition);
+        rotation.addListener(q -> recalculateSizeForRotation());
     }
 
     public BaseUIElement(String name) {
@@ -74,6 +81,16 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
     @Override
     public Vector2fProperty sizeProperty() {
         return size;
+    }
+
+    @Override
+    public Quaternionf getRotation() {
+        return rotation.get();
+    }
+
+    @Override
+    public QuaternionfProperty rotationProperty() {
+        return rotation;
     }
 
     @Override
@@ -134,5 +151,18 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
                 pos.setY(pPos.y);
                 break;
         }
+    }
+
+    protected void recalculateSizeForRotation() {
+        if (baseSize.x == 0 && baseSize.y == 0) return;
+
+        Quaternionf q = rotation.get();
+        float sinA = 2f * q.w * q.z;
+        float cosA = 1f - 2f * q.z * q.z;
+
+        float newW = baseSize.x * Math.abs(cosA) + baseSize.y * Math.abs(sinA);
+        float newH = baseSize.x * Math.abs(sinA) + baseSize.y * Math.abs(cosA);
+
+        size.set(newW, newH);
     }
 }

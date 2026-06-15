@@ -5,6 +5,7 @@ import bl0.aeon.render.api.data.render.ui.ITextRenderable;
 import bl0.aeon.render.api.resource.Font;
 import bl0.aeon.render.api.resource.Mesh;
 import bl0.aeon.render.api.resource.ShaderProgram;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -17,8 +18,8 @@ public class TextRenderObj extends UIRenderObj implements ITextRenderable {
 
     private final Font font;
 
-    public TextRenderObj(Vector2f position, Vector2f size, Material material, Mesh mesh, Font font, String text, Material textMaterial, Mesh textMesh) {
-        super(position, size, material, mesh);
+    public TextRenderObj(Vector2f position, Vector2f size, Quaternionf rotation, Material material, Mesh mesh, Font font, String text, Material textMaterial, Mesh textMesh) {
+        super(position, size, rotation, material, mesh);
         this.textMesh = textMesh;
         this.textMaterial = textMaterial;
         this.text = text;

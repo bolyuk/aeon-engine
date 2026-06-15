@@ -12,6 +12,8 @@ import bl0.aeon.render.api.resource.Mesh;
 import bl0.bjs.common.core.relations.ObservableObject;
 import bl0.bjs.common.core.relations.v2.Property;
 import bl0.bjs.common.core.relations.v2.xtra.StringProperty;
+import org.joml.Quaternionf;
+import org.joml.Vector2f;
 
 public class TextObject extends BaseUIElement implements UITextElement {
     public final StringProperty text = new StringProperty();
@@ -26,7 +28,8 @@ public class TextObject extends BaseUIElement implements UITextElement {
         textMesh = eCtx.getResourceFabric().createUITextMesh(name+"_text");
         textMaterial.setShaderProgram(eCtx.getResourceManager().getResource(ShaderPrograms.TEXT_SOLID));
         textMaterial.setColor(Colors.WHITE);
-        text.addListener(this::recalculateTextSize);
+        text.addListener(x -> recalculateTextSize());
+        font.addListener(x -> recalculateTextSize());
         material.setDepthTestEnabled(false);
     }
 
@@ -34,8 +37,19 @@ public class TextObject extends BaseUIElement implements UITextElement {
         super(name);
     }
 
-    private void recalculateTextSize(String s) {
-        size.set(font.get().calculateSize(text.get()));
+    private void recalculateTextSize() {
+        Vector2f calculated = font.get().calculateSize(text.get());
+
+        // запоминаем чистый размер текста
+        baseSize.set(calculated);
+
+        // если есть поворот — сразу считаем AABB, иначе ставим как есть
+        Quaternionf q = rotation.get();
+        if (q != null && (q.z != 0f || q.x != 0f || q.y != 0f)) {
+            recalculateSizeForRotation();
+        } else {
+            size.set(calculated);
+        }
     }
 
     @Override

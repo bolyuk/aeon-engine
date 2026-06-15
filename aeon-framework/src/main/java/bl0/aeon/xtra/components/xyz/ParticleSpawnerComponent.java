@@ -1,4 +1,4 @@
-package bl0.aeon.framework.components.xyz;
+package bl0.aeon.xtra.components.xyz;
 
 import bl0.aeon.api.component.graphic.Material;
 import bl0.aeon.api.component.graphic.Model;

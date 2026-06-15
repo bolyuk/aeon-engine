@@ -1,4 +1,4 @@
-package bl0.aeon.framework.components;
+package bl0.aeon.xtra.components;
 
 import bl0.aeon.api.component.interfaces.IWindowSizeChangeConsumerComponent;
 import bl0.aeon.api.core.IEngineContext;

@@ -89,7 +89,7 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
 
             program.setUniform("projection", new Matrix4f().ortho2D(0, w, h, 0));
             ColorUniforms.setUniforms(uiElement, program);
-
+            UIRotationUniforms.setUniforms(uiElement, program);
             mesh.draw(uiElement.getPosition(), uiElement.getSize());
 
             mesh.unbind();
@@ -105,6 +105,7 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
 
             textShader.setUniform("projection", new Matrix4f().ortho2D(0, w, h, 0));
             textShader.setUniform("uTexture0", 0);
+            UIRotationUniforms.setUniforms(uiElement, textShader);
             textShader.setUniform(Uniforms.COLOR, itr.getTextColor());
 
             Vector2f pos = uiElement.getPosition();

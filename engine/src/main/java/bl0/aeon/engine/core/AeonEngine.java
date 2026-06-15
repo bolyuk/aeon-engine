@@ -73,7 +73,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private ArrayList<Extension> extensions = new ArrayList<>();
 
-    private int fpsLimit = 60;
+    private int fpsLimit = 400;
 
     private HashMap<Key, Long> sysKeysDelayData = new HashMap<>();
 
@@ -368,6 +368,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         if(element instanceof UITextElement itr){
             prepared.add(new TextRenderObj(itr.getPosition(),
                     itr.getSize(),
+                    itr.getRotation(),
                     itr.getMaterial(),
                     itr.getMesh(),
                     itr.getFont(),
@@ -377,6 +378,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         } else if(element instanceof UIDrawableElement iur){
             prepared.add(new UIRenderObj(iur.getPosition(),
                     iur.getSize(),
+                    iur.getRotation(),
                     iur.getMaterial(),
                     iur.getMesh()));
         }

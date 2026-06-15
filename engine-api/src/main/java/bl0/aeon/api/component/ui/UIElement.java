@@ -2,9 +2,11 @@ package bl0.aeon.api.component.ui;
 
 import bl0.aeon.api.component.graphic.Material;
 import bl0.aeon.api.interfaces.IClickable;
+import bl0.aeon.api.scene.properties.QuaternionfProperty;
 import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.render.api.base.IName;
 import bl0.aeon.render.api.resource.Mesh;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 
 public interface UIElement extends IClickable, IName {
@@ -17,5 +19,8 @@ public interface UIElement extends IClickable, IName {
 
     Vector2f getSize();
     Vector2fProperty sizeProperty();
+
+    Quaternionf getRotation();
+    QuaternionfProperty rotationProperty();
 
 }
