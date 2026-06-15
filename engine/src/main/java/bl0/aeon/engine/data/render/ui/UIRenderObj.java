@@ -15,19 +15,26 @@ public class UIRenderObj implements IUIRenderable {
     private final Quaternionf rotation;
     private final Mesh mesh;
     private final ShaderProgram shader;
+    private final Vector4f padding;
 
-    public UIRenderObj(Vector2f position, Vector2f size, Quaternionf rotation, Material material, Mesh mesh) {
+    public UIRenderObj(Vector2f position, Vector2f size, Vector4f padding, Quaternionf rotation, Material material, Mesh mesh) {
         this.position = position;
         this.size = size;
         this.rotation = rotation;
         this.color = material.getColor();
         this.mesh = mesh;
         this.shader = material.getShaderProgram();
+        this.padding = padding;
     }
 
     @Override
     public Vector2f getPosition() {
         return position;
+    }
+
+    @Override
+    public Vector2f getRenderPosition() {
+        return getPosition().add(padding.x, padding.y);
     }
 
     @Override
@@ -38,6 +45,11 @@ public class UIRenderObj implements IUIRenderable {
     @Override
     public Quaternionf getRotation() {
         return rotation;
+    }
+
+    @Override
+    public Vector4f getPadding() {
+        return padding;
     }
 
     @Override

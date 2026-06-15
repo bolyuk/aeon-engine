@@ -7,9 +7,11 @@ import org.joml.Vector4f;
 
 public interface IUIRenderable extends IRenderable {
     Vector2f getPosition();
+    Vector2f getRenderPosition();
     Vector2f getSize();
 
     Quaternionf getRotation();
+    Vector4f getPadding();
 
     Vector4f getBackgroundColor();
 

@@ -18,8 +18,8 @@ public class TextRenderObj extends UIRenderObj implements ITextRenderable {
 
     private final Font font;
 
-    public TextRenderObj(Vector2f position, Vector2f size, Quaternionf rotation, Material material, Mesh mesh, Font font, String text, Material textMaterial, Mesh textMesh) {
-        super(position, size, rotation, material, mesh);
+    public TextRenderObj(Vector2f position, Vector2f size, Vector4f padding, Quaternionf rotation, Material material, Mesh mesh, Font font, String text, Material textMaterial, Mesh textMesh) {
+        super(position, size, padding, rotation, material, mesh);
         this.textMesh = textMesh;
         this.textMaterial = textMaterial;
         this.text = text;

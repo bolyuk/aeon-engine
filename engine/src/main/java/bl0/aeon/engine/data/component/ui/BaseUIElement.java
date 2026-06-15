@@ -4,27 +4,36 @@ import bl0.aeon.api.component.graphic.Material;
 import bl0.aeon.api.component.ui.UIDrawableElement;
 import bl0.aeon.api.core.IEngineContext;
 import bl0.aeon.api.core.IFrameContext;
+import bl0.aeon.api.interfaces.IInputConsumer;
 import bl0.aeon.api.scene.SceneObject;
 import bl0.aeon.api.scene.properties.QuaternionfProperty;
+import bl0.aeon.api.scene.properties.Vector4fProperty;
 import bl0.aeon.engine.data.component.AE_Material;
 import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.engine.data.component.ui.props.HorizontalAlignment;
 import bl0.aeon.engine.data.component.ui.props.VerticalAlignment;
 import bl0.aeon.render.api.c.resources.ShaderPrograms;
+import bl0.aeon.render.api.data.input.InputData;
+import bl0.aeon.render.api.data.input.Key;
 import bl0.aeon.render.api.resource.Mesh;
 import bl0.aeon.api.component.ui.UIContainer;
 import bl0.bjs.common.core.event.action.Action;
+import bl0.bjs.common.core.relations.v2.xtra.BooleanProperty;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
-public class BaseUIElement extends SceneObject implements UIDrawableElement {
+public class BaseUIElement extends SceneObject implements UIDrawableElement, IInputConsumer {
     private UIContainer parent;
 
     protected Vector2f baseSize = new Vector2f();
 
+    public final BooleanProperty isMouseHover = new BooleanProperty();
+
     public final Vector2fProperty pos = new Vector2fProperty();
     public final Vector2fProperty size = new Vector2fProperty();
 
+    public final Vector4fProperty padding = new Vector4fProperty();
     public final QuaternionfProperty rotation = new QuaternionfProperty();
 
     public VerticalAlignment verticalAlignment = null;
@@ -33,6 +42,7 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
     public Action<Void> action = null;
 
     public Material material = new AE_Material();
+    public Material hoverMaterial = new AE_Material();
     public Mesh mesh;
 
     public BaseUIElement(String name, IEngineContext eCtx) {
@@ -94,8 +104,18 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
     }
 
     @Override
+    public Vector4f getPadding() {
+        return padding.get();
+    }
+
+    @Override
+    public Vector4fProperty paddingProperty() {
+        return padding;
+    }
+
+    @Override
     public Material getMaterial() {
-        return material;
+        return isMouseHover.get() && hoverMaterial != null ? hoverMaterial : material;
     }
 
     @Override
@@ -119,6 +139,7 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
 
         var pSize = parent.getSize();
         var pPos = parent.positionProperty().get();
+        var padding = getPadding();
 
         if(parent.sizeProperty() != null) {
             if (pSize.x < size.x())
@@ -133,22 +154,22 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
                 pos.setX(pPos.x+pSize.x-size.x());
                 break;
             case CENTER:
-                pos.setX(pPos.x+pSize.x/2 -size.x()/2);
+                pos.setX(pPos.x+pSize.x/2 -(padding.x+size.x()/2));
                 break;
             case LEFT:
-                pos.setX(0);
+                pos.setX(padding.x);
         }
 
         if(verticalAlignment != null)
         switch (verticalAlignment) {
             case CENTER:
-                pos.setY(pPos.y+pSize.y/2 -size.y()/2);
+                pos.setY(pPos.y+pSize.y/2 -(padding.y+size.y()/2));
                 break;
             case BOTTOM:
                 pos.setY(pPos.y+pSize.y - size.y());
                 break;
             case TOP:
-                pos.setY(pPos.y);
+                pos.setY(pPos.y+padding.y);
                 break;
         }
     }
@@ -164,5 +185,38 @@ public class BaseUIElement extends SceneObject implements UIDrawableElement {
         float newH = baseSize.x * Math.abs(sinA) + baseSize.y * Math.abs(cosA);
 
         size.set(newW, newH);
+    }
+
+    @Override
+    public boolean onInput(InputData data, IEngineContext ctx) {
+        double mouseX = data.getMouseX();
+        double mouseY = data.getMouseY();
+
+        Vector2f center = new Vector2f(
+                pos.get().x + baseSize.x / 2f,
+                pos.get().y + baseSize.y / 2f
+        );
+
+        float dx = (float) mouseX - center.x;
+        float dy = (float) mouseY - center.y;
+
+        Quaternionf q = rotation.get();
+        float sinA =  2f * q.w * q.z;  // sin угла
+        float cosA = 1f - 2f * q.z * q.z; // cos угла
+
+        float localX = dx * cosA + dy * sinA;
+        float localY = -dx * sinA + dy * cosA;
+
+        boolean hit = Math.abs(localX) <= baseSize.x / 2f
+                && Math.abs(localY) <= baseSize.y / 2f;
+
+        isMouseHover.set(hit);
+
+        if (hit && data.isKeyDown(Key.MOUSE_LEFT)) {
+            onClick();
+            return true;
+        }
+
+        return false;
     }
 }

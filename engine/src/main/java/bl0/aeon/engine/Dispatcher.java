@@ -18,9 +18,15 @@ public class Dispatcher implements IDispatcher {
     }
 
     @Override
+    public void schedule(Stage stage, int count, Action<IEngineContext> action) {
+        data.computeIfAbsent(stage, (s) -> new ActionController<>());
+        data.get(stage).schedule(count, action);
+    }
+
+    @Override
     public void dispatchUnique(Stage stage, String tag, Action<IEngineContext> action) {
         data.computeIfAbsent(stage, (s) -> new ActionController<>());
-        data.get(stage).registerSingle(new TaggedAction<IEngineContext>() {
+        data.get(stage).registerUnique(new TaggedAction<IEngineContext>() {
 
             @Override
             public void invoke(IEngineContext data) {

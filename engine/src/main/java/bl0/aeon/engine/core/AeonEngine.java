@@ -251,7 +251,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private void onKeyUpdate(){
         var winManager = backend.getWindowManager();
         var input = winManager.pollInputData();
-        if(input == null) return;
+
         if(isKeyDownAndDelayPassed(input, Key.ESCAPE)) {
             dispatcher.dispatchUnique(Stage.AFTER_SCENE_RENDER, ActionTags.KEY_INPUT_ESC_TAG , (c)->{
                 winManager.terminate();
@@ -265,11 +265,12 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         }
 
         // TODO probably need to stop on first onInput() == true but still not sure.
+
         for (SceneObject so : scene.getSceneObjects()) {
             if (so instanceof IComponentContainer c) {
-               var consumersList = c.getEveryComponent(InputConsumerComponent.class);
-               for (var consumer : consumersList)
-                   consumer.onInput(input, this);
+                var consumersList = c.getEveryComponent(InputConsumerComponent.class);
+                for (var consumer : consumersList)
+                    consumer.onInput(input, this);
             } else if(so instanceof IInputConsumer ic){
                 ic.onInput(input, this);
             }
@@ -368,6 +369,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         if(element instanceof UITextElement itr){
             prepared.add(new TextRenderObj(itr.getPosition(),
                     itr.getSize(),
+                    itr.getPadding(),
                     itr.getRotation(),
                     itr.getMaterial(),
                     itr.getMesh(),
@@ -378,6 +380,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         } else if(element instanceof UIDrawableElement iur){
             prepared.add(new UIRenderObj(iur.getPosition(),
                     iur.getSize(),
+                    iur.getPadding(),
                     iur.getRotation(),
                     iur.getMaterial(),
                     iur.getMesh()));

@@ -155,7 +155,7 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
 
         input.mdt = mdt;
         input.mPos = mPos;
-        return input.isAnyDown() ? input : null;
+        return input;
     }
 
     @Override
