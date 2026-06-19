@@ -8,19 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import bl0.aeon.gl.graphic.GLBitmapFont;
-import bl0.aeon.gl.graphic.GLCharacter;
-import bl0.aeon.gl.graphic.GLShaderProgram;
-import bl0.aeon.gl.graphic.GLTexture;
+import bl0.aeon.gl.graphic.*;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
 import bl0.aeon.gl.graphic.mesh.ui.UIQuadMesh;
 import bl0.aeon.gl.graphic.mesh.ui.UITextMesh;
 import bl0.aeon.gl.graphic.mesh.VertexAttribute;
 import bl0.aeon.render.api.backend.IResourceFabric;
-import bl0.aeon.render.api.resource.Font;
-import bl0.aeon.render.api.resource.Mesh;
-import bl0.aeon.render.api.resource.ShaderProgram;
-import bl0.aeon.render.api.resource.Texture;
+import bl0.aeon.render.api.resource.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -47,6 +41,11 @@ public class GLResourceFabric implements IResourceFabric {
         String vertex = readTextResource(shaderDir+"/vertex.shader");
         String fragment = readTextResource(shaderDir+"/fragment.shader");
         return new GLShaderProgram(vertex, fragment, name);
+    }
+
+    @Override
+    public Framebuffer createFramebuffer(String name) {
+        return new GLFramebuffer(name);
     }
 
     @Override
@@ -145,6 +144,26 @@ public class GLResourceFabric implements IResourceFabric {
     }
 
     @Override
+    public Mesh createQuad(String name) {
+        List<VertexAttribute> attributes = List.of(
+                new VertexAttribute(2), // position
+                new VertexAttribute(2)  // uv
+        );
+
+        float[] vertices = {
+                -1f,  1f,   0f, 1f,
+                -1f, -1f,   0f, 0f,
+                1f, -1f,   1f, 0f,
+
+                -1f,  1f,   0f, 1f,
+                1f, -1f,   1f, 0f,
+                1f,  1f,   1f, 1f
+        };
+
+        return  new GLMesh(vertices, attributes, name);
+    }
+
+    @Override
     public Mesh createCube(String name) {
         float[] vertices = {
                 // pos               // normal         // uv
@@ -220,6 +239,11 @@ public class GLResourceFabric implements IResourceFabric {
     @Override
     public Texture createTextureFromRGBABuffer(ByteBuffer buffer, int width, int height, String name) {
         return new GLTexture(name, width, height, buffer);
+    }
+
+    @Override
+    public Texture createTexture(int width, int height, String name) {
+        return new GLTexture(name, width, height, null);
     }
 
     @Override

@@ -45,6 +45,8 @@ import bl0.aeon.render.api.data.input.Key;
 import bl0.aeon.render.api.data.light.DirectionalLight;
 import bl0.aeon.render.api.data.light.PointLight;
 import bl0.aeon.render.api.data.render.IRenderable;
+import bl0.aeon.render.api.resource.Framebuffer;
+import bl0.aeon.render.api.resource.ShaderProgram;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
 import bl0.bjs.common.core.tuple.Pair;
@@ -67,7 +69,6 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private final Object lock = new Object();
 
-
     private double lastTime = 0;
     private boolean isRunning = true;
 
@@ -75,9 +76,12 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private int fpsLimit = 400;
 
+    private long sysKeyDelay = 300;
     private HashMap<Key, Long> sysKeysDelayData = new HashMap<>();
 
-    private long sysKeyDelay = 300;
+
+
+    private Framebuffer framebuffer;
 
     public AeonEngine(IContext ctx, GameInfo info) {
         super(ctx);
@@ -134,6 +138,26 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
             e.initialize();
     }
 
+    public void initializeDefaultFramebuffer(){
+        framebuffer = getResourceFabric().createFramebuffer("default_framebuffer");
+
+        framebuffer.setShader(getResourceManager().getResource(ShaderPrograms.FRAMEBUFFER, ShaderProgram.class));
+
+        // TODO update framebuffer sizes
+        framebuffer.setTexture(getResourceFabric().createTexture((int)fCtx.size.x(),(int) fCtx.size.y(),"default_framebuffer_texture"));
+        framebuffer.setMesh(getResourceFabric().createQuad("default_framebuffer_mesh"));
+    }
+
+    public void setFramebuffer(Framebuffer framebuffer) {
+        dispatcher.dispatchUnique(Stage.SYSTEM,"FRAMEBUFFER", (e) -> {
+            this.framebuffer = framebuffer;
+        });
+    }
+
+    public Framebuffer getFramebuffer() {
+        return framebuffer;
+    }
+
     public void addExtension(Class<? extends Extension> extensionClass){
         try {
             extensions.add(extensionClass.getConstructor(IEngineContext.class).newInstance(this));
@@ -168,6 +192,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
         loadAndSaveShader("shaders/text_solid", ShaderPrograms.TEXT_SOLID);
         loadAndSaveShader("shaders/ui_solid", ShaderPrograms.UI_SOLID);
+        loadAndSaveShader("shaders/framebuffer", ShaderPrograms.FRAMEBUFFER);
 
         resourceManager.registerResource(getResourceFabric().createUITextMesh(Meshes.UI_TEXT_MESH));
         resourceManager.registerResource(getResourceFabric().createUIQuadMesh(Meshes.UI_QUAD_MESH));
@@ -362,7 +387,8 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         backend.getRenderEngine().render(new RenderFrame(scene.getCamera(),
                 prepared,
                 (int)getFrameContext().sizeProperty().x(),
-                (int)getFrameContext().sizeProperty().y()));
+                (int)getFrameContext().sizeProperty().y(),
+                        framebuffer));
     }
 
     private void prepUIElement(UIElement element, ArrayList<IRenderable> prepared) {

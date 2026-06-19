@@ -1,6 +1,7 @@
 package bl0.aeon.render.api.backend;
 
 import bl0.aeon.render.api.data.render.RenderFrame;
+import bl0.aeon.render.api.resource.Framebuffer;
 
 public interface IRenderManager {
     void render(RenderFrame renderContext);

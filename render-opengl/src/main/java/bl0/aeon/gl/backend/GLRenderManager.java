@@ -4,6 +4,7 @@ import bl0.aeon.gl.GLState;
 import bl0.aeon.gl.base.GLBaseClass;
 import bl0.aeon.gl.c.Uniforms;
 import bl0.aeon.gl.graphic.GLBitmapFont;
+import bl0.aeon.gl.graphic.GLFramebuffer;
 import bl0.aeon.gl.graphic.GLShaderProgram;
 import bl0.aeon.gl.graphic.GLTexture;
 import bl0.aeon.gl.graphic.mesh.GLMesh;
@@ -19,6 +20,7 @@ import bl0.aeon.render.api.data.render.scene.ISceneRenderable;
 import bl0.aeon.render.api.data.render.scene.ISingleRenderable;
 import bl0.aeon.render.api.data.render.ui.ITextRenderable;
 import bl0.aeon.render.api.data.render.ui.IUIRenderable;
+import bl0.aeon.render.api.resource.Framebuffer;
 import bl0.bjs.common.base.IContext;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -46,11 +48,39 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
     }
 
     @Override
-    public void render(RenderFrame renderContext) {
+    public void render(RenderFrame frame) {
         try {
+            if(!(frame.framebuffer() instanceof GLFramebuffer glFramebuffer))
+                throw new RuntimeException("framebuffer is not a GLFramebuffer");
+
+            glFramebuffer.bind();
+            GL30.glClearColor(0.1f,0.1f,0.1f,1f);
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            GL30.glClearColor(0,0,0,1f);
-            innerRender(renderContext);
+
+            innerRender(frame);
+
+            glFramebuffer.unbind();
+            GL30.glClearColor(1f,1f,1f,1f);
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+            if(!(frame.framebuffer().getShader() instanceof GLShaderProgram glShaderProgram))
+                throw new RuntimeException("Shader is not a GLShaderProgram");
+
+            glShaderProgram.bind();
+
+            if(!(frame.framebuffer().getMesh() instanceof GLMesh glMesh))
+                throw new RuntimeException("Mesh is not a GLMesh");
+
+            glMesh.bind();
+
+            GL30.glDisable(GL30.GL_DEPTH_TEST);
+
+            if(!(frame.framebuffer().getTexture() instanceof GLTexture glTexture))
+                throw new RuntimeException("Framebuffer Texture is not a GLTexture");
+
+            glTexture.bind();
+            glMesh.draw();
+
         } catch(Throwable t) {
             ctx.generateLogger(this.getClass()).err(t);
         }
