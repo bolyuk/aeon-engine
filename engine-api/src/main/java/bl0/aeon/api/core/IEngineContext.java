@@ -2,7 +2,9 @@ package bl0.aeon.api.core;
 
 import bl0.aeon.api.scene.Scene;
 import bl0.aeon.api.stage.IDispatcher;
+import bl0.aeon.api.stage.Stage;
 import bl0.aeon.render.api.backend.IResourceFabric;
+import bl0.aeon.render.api.resource.Framebuffer;
 import bl0.bjs.eventbus.IEventBus;
 import bl0.bjs.logging.ILogger;
 
@@ -19,4 +21,7 @@ public interface IEngineContext {
     ILogger getDefaultLogger();
 
     IEventBus getEventBus();
+
+    void setFramebuffer(Framebuffer framebuffer);
+    Framebuffer getFramebuffer();
 }

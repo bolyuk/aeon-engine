@@ -13,6 +13,7 @@ import bl0.aeon.render.api.c.Colors;
 import bl0.aeon.render.api.c.resources.ShaderPrograms;
 import bl0.aeon.render.api.c.resources.Textures;
 import bl0.aeon.render.api.resource.Texture;
+import bl0.aeon.xtra.components.CameraSettingsComponent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -83,6 +84,7 @@ public class CubeTestScene extends BaseScene {
 
         Entity directionalLight = new Entity("DirectionalLight");
         directionalLight.addComponent((Component) LightFabric.createDirectionalLight());
+        directionalLight.addComponent(new CameraSettingsComponent());
         add(directionalLight);
     }
 }

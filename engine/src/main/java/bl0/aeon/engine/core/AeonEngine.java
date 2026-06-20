@@ -33,6 +33,8 @@ import bl0.aeon.engine.data.render.ui.TextRenderObj;
 import bl0.aeon.engine.data.render.ui.UIRenderObj;
 import bl0.aeon.engine.scene.BaseScene;
 import bl0.aeon.render.api.backend.BackendContainer;
+import bl0.aeon.render.api.base.IDisposable;
+import bl0.aeon.render.api.base.IResource;
 import bl0.aeon.render.api.c.resources.Fonts;
 import bl0.aeon.render.api.c.resources.Meshes;
 import bl0.aeon.render.api.c.resources.ShaderPrograms;
@@ -47,6 +49,7 @@ import bl0.aeon.render.api.data.light.PointLight;
 import bl0.aeon.render.api.data.render.IRenderable;
 import bl0.aeon.render.api.resource.Framebuffer;
 import bl0.aeon.render.api.resource.ShaderProgram;
+import bl0.aeon.render.api.resource.Texture;
 import bl0.bjs.common.base.BJSBaseClass;
 import bl0.bjs.common.base.IContext;
 import bl0.bjs.common.core.tuple.Pair;
@@ -98,6 +101,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
     private void vpcheListener(ViewPortChangeEvent.VPCEPayload VPCEPayload) {
         dispatcher.dispatchUnique(Stage.SYSTEM, ActionTags.WIN_RESIZE_CALLBACK_TAG ,(c) -> {
             this.fCtx.size.set(VPCEPayload.width(),VPCEPayload.height());
+            resizeFramebuffer();
             backend.getWindowManager().changeViewPort(VPCEPayload.width(), VPCEPayload.height(), VPCEPayload.aspectRatio());
         });
     }
@@ -119,6 +123,15 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
                     consumer.onWindowSizeChange(eCtx);
             }
         });
+    }
+
+    private void resizeFramebuffer(){
+        Texture old = framebuffer.getTexture();
+        if (old instanceof IDisposable res)
+            res.dispose();
+
+        Texture newTexture = getResourceFabric().createTexture((int)fCtx.size.x(), (int)fCtx.size.y(), "default_framebuffer_texture");
+        framebuffer.setTexture(newTexture);
     }
 
     public void setGraphicBackend(BackendContainer backend) {

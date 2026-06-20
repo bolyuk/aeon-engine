@@ -2,17 +2,17 @@ package bl0.aeon.gl.graphic;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 import bl0.aeon.render.api.base.IResource;
 import bl0.aeon.render.api.resource.ShaderProgram;
 import bl0.aeon.gl.base.GLResource;
 import bl0.aeon.gl.base.IBindable;
 import bl0.aeon.gl.base.CoreException;
+import bl0.bjs.common.async.control.IAsync;
+import bl0.bjs.common.core.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
 
 import org.lwjgl.opengl.GL30;
@@ -20,18 +20,17 @@ import org.lwjgl.opengl.GL30;
 public class GLShaderProgram extends GLResource implements IBindable, ShaderProgram {
     private final GLShader vertexShader;
     private final GLShader fragmentShader;
-    private final FloatBuffer matrixBuffer;
+    private final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 
-    private final HashMap<String, Integer> indexes;
-    private final HashMap<String, Integer> uniforms;
+    private final HashMap<String, Integer> indexes = new HashMap<>();
+    private final HashMap<String, Integer> uniforms = new HashMap<>();
+    private final HashMap<String, IAsync> uniformProviders = new HashMap<>();
 
     public GLShaderProgram(@NotNull String vertexShader, @NotNull String fragmentShader, @NotNull String name) {
         super(GL30.glCreateProgram(), name);
-        this.matrixBuffer = BufferUtils.createFloatBuffer(16);
-        this.indexes = new HashMap<>();
-        this.uniforms = new HashMap<>();
-        this.vertexShader = new GLShader(ShaderType.VERTEX, vertexShader, name+"_vertex_inner");
-        this.fragmentShader = new GLShader(ShaderType.FRAGMENT, fragmentShader, name+"_fragment_inner");;
+
+        this.vertexShader = new GLShader(ShaderType.VERTEX, vertexShader, name + "_vertex_inner");
+        this.fragmentShader = new GLShader(ShaderType.FRAGMENT, fragmentShader, name + "_fragment_inner");;
 
         GL30.glAttachShader(this.ID, this.vertexShader.ID);
         GL30.glAttachShader(this.ID, this.fragmentShader.ID);
@@ -92,6 +91,7 @@ public class GLShaderProgram extends GLResource implements IBindable, ShaderProg
     @Override
     public void bind() {
         GL30.glUseProgram(this.ID);
+        uniformProviders.forEach((key, value) -> value.run());
     }
 
     @Override
@@ -133,7 +133,70 @@ public class GLShaderProgram extends GLResource implements IBindable, ShaderProg
         return new GLShaderProgram(this.vertexShader.source, this.fragmentShader.source, name);
     }
 
-    private final class GLShader extends GLResource  {
+    @Override
+    public void setUniformProviderInt(Consumer<HashMap<String, Integer>> values) {
+        uniformProviders.put("int", () -> {
+            var data = new HashMap<String, Integer>();
+            values.accept(data);
+            data.forEach(this::setUniform);
+        });
+    }
+
+    @Override
+    public void setUniformProvider1f(Consumer<HashMap<String, Float>> values) {
+        uniformProviders.put("1f", () -> {
+            var data = new HashMap<String, Float>();
+            values.accept(data);
+            data.forEach(this::setUniform);
+        });
+    }
+
+    @Override
+    public void setUniformProvider2f(Consumer<HashMap<String, Vector2f>> values) {
+        uniformProviders.put("2f", () -> {
+            var data = new HashMap<String, Vector2f>();
+            values.accept(data);
+            data.forEach((k, v) -> { this.setUniform(k, v.x, v.y); });
+        });
+    }
+
+    @Override
+    public void setUniformProvider3f(Consumer<HashMap<String, Vector3f>> values) {
+        uniformProviders.put("3f", () -> {
+            var data = new HashMap<String, Vector3f>();
+            values.accept(data);
+            data.forEach(this::setUniform);
+        });
+    }
+
+    @Override
+    public void setUniformProvider4f(Consumer<HashMap<String, Vector4f>> values) {
+        uniformProviders.put("4f", () -> {
+            var data = new HashMap<String, Vector4f>();
+            values.accept(data);
+            data.forEach(this::setUniform);
+        });
+    }
+
+    @Override
+    public void setUniformProviderQuat(Consumer<HashMap<String, Quaternionf>> values) {
+        uniformProviders.put("quat", () -> {
+            var data = new HashMap<String, Quaternionf>();
+            values.accept(data);
+            data.forEach(this::setUniform);
+        });
+    }
+
+    @Override
+    public void setUniformProviderMat4(Consumer<HashMap<String, Matrix4f>> values) {
+        uniformProviders.put("mat4f", () -> {
+            var data = new HashMap<String, Matrix4f>();
+            values.accept(data);
+            data.forEach(this::setUniform);
+        });
+    }
+
+    private static final class GLShader extends GLResource  {
         public final ShaderType type;
         public final String source;
 
@@ -156,7 +219,7 @@ public class GLShaderProgram extends GLResource implements IBindable, ShaderProg
 
         @Override
         public IResource makeCopy(String name) {
-            return new  GLShader(this.type, this.source, name);
+            return new GLShader(this.type, this.source, name);
         }
     }
 
