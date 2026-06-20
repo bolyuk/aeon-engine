@@ -89,6 +89,9 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
     private void innerRender(RenderFrame rFrame) {
         List<IUIRenderable> ui = new ArrayList<>();
 
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         for(IRenderable raw : rFrame.renderables()){
             if(raw instanceof ISceneRenderable obj)
                 drawSceneRenderable(obj, rFrame.camera());
@@ -98,16 +101,15 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
 
         if(!ui.isEmpty()) {
             GL11.glDisable(GL11.GL_CULL_FACE);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             for (IUIRenderable uiElement : ui)
                 drawUIElement(uiElement, rFrame.framebufferWidth(), rFrame.framebufferHeight());
 
             GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
         }
+
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ZERO);
     }
 
     private void drawUIElement(IUIRenderable uiElement, int w, int h) {

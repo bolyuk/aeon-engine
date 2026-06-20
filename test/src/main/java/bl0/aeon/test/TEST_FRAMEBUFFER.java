@@ -20,14 +20,10 @@ public class TEST_FRAMEBUFFER {
         engine.initialize(800, 500);
         engine.loadDefaultResources();
 
-        var shader = engine.getResourceFabric().loadShaderProgramFromResourcePath("shaders/framebuffer_pixelated", ShaderPrograms.FRAMEBUFFER+"_INVERTED");
-
-        shader.setUniformProvider2f((m) -> {
-            m.put("screenSize", engine.getFrameContext().sizeProperty().get());
-        });
+        var shader = engine.getResourceFabric().loadShaderProgramFromResourcePath("shaders/framebuffer_distorted", ShaderPrograms.FRAMEBUFFER+"_INVERTED");
 
         shader.setUniformProvider1f((m) -> {
-            m.put("pixelSize", 1.5f);
+            m.put("time", (float)engine.getFrameContext().getDeltaTime());
         });
 
         engine.initializeDefaultFramebuffer();
