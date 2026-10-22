@@ -11,6 +11,7 @@ import bl0.aeon.api.scene.SceneObject;
 import bl0.aeon.api.scene.properties.QuaternionfProperty;
 import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.api.scene.properties.Vector4fProperty;
+import bl0.aeon.api.stage.Stage;
 import bl0.aeon.render.api.data.render.Camera;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
@@ -60,14 +61,18 @@ public class BaseScene implements Scene, UIContainer {
 
     @Override
     public void add(SceneObject sceneObject) {
-        entities.add(sceneObject);
-        if(sceneObject instanceof UIElement uie)
-            uie.setParent(this);
+        eCtx.getDispatcher().dispatch(Stage.BEFORE_SCENE_RENDER, (ctx) -> {
+            entities.add(sceneObject);
+            if(sceneObject instanceof UIElement uie)
+                uie.setParent(this);
+        });
     }
 
     @Override
     public void remove(SceneObject sceneObject) {
-        entities.remove(sceneObject);
+        eCtx.getDispatcher().dispatch(Stage.BEFORE_SCENE_RENDER, (ctx) -> {
+            entities.remove(sceneObject);
+        });
     }
 
     @Override
