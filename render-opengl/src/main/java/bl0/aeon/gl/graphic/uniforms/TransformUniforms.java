@@ -6,6 +6,6 @@ import bl0.aeon.render.api.data.render.scene.ISingleRenderable;
 
 public class TransformUniforms {
     public static void setUniforms(ISingleRenderable obj, GLShaderProgram shaderProgram) {
-        shaderProgram.setUniform(Uniforms.MODEL, obj.getMatrix());
+        shaderProgram.setModelMatrix(obj.getMatrix());
     }
 }

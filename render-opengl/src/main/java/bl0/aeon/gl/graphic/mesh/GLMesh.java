@@ -16,19 +16,53 @@ public class GLMesh extends GLResource implements IBindable, Mesh {
     public final int vboID;
     public final int vaoID;
     public final List<VertexAttribute> vertexAttributes;
-    public final float[] vertecies;
+    /** CPU-side copy of the vertex data; null after {@link #dropCpuData()}. */
+    public float[] vertecies;
     public final int vertexCount;
+    /** Index of the first vertex in the buffer: 0 for a mesh with its own buffer, the slot start for a {@link GLMeshPool} mesh. */
+    public final int firstVertex;
 
     private int instanceVboID = 0;
     private int instanceCapacity = 0;
 
-    public GLMesh(float[] vertices, List<VertexAttribute> vertexAttributes, String name) {
+/**
+ * A mesh from interleaved vertex bytes: {@code stride} bytes per vertex, every attribute placed by its own
+ * {@link VertexAttribute#byteOffset} and component type. Much smaller than the all-float layout; the shader sees plain floats
+ * (integers raw, or normalised if the attribute says so). No CPU copy is kept, so such a mesh cannot be copied.
+ */
+public GLMesh(byte[] data, int stride, List<VertexAttribute> vertexAttributes, String name) {
+    super(-1, name);
+    this.vertexAttributes = vertexAttributes;
+    this.vertecies = null;
+    this.vertexCount = data.length / stride;
+    this.firstVertex = 0;
+    this.vaoID = GL30.glGenVertexArrays();
+    GL30.glBindVertexArray(this.vaoID);
+    this.vboID = GL30.glGenBuffers();
+    GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, this.vboID);
+    java.nio.ByteBuffer buffer = org.lwjgl.system.MemoryUtil.memAlloc(data.length);
+    try {
+        buffer.put(data).flip();
+        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
+    } finally {
+        org.lwjgl.system.MemoryUtil.memFree(buffer);
+    }
+    for (int i = 0; i < vertexAttributes.size(); ++i) {
+        VertexAttribute a = vertexAttributes.get(i);
+        GL30.glVertexAttribPointer(i, a.amount, a.glType, a.normalized, stride, (long) a.byteOffset);
+        GL30.glEnableVertexAttribArray(i);
+    }
+    GL30.glBindVertexArray(0);
+}
+
+public GLMesh(float[] vertices, List<VertexAttribute> vertexAttributes, String name) {
         super(-1, name);
         this.vertexAttributes = vertexAttributes;
         this.vertecies = vertices;
         int totalAttributeSize = 0;
         totalAttributeSize = vertexAttributes != null ? vertexAttributes.stream().mapToInt(a -> a.amount).sum() : 3;
         this.vertexCount = vertices.length / totalAttributeSize;
+        this.firstVertex = 0;
         this.vaoID = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(this.vaoID);
         this.vboID = GL30.glGenBuffers();
@@ -50,6 +84,17 @@ public class GLMesh extends GLResource implements IBindable, Mesh {
         GL30.glBindVertexArray(0);
     }
 
+    /** A mesh living in a buffer it does not own (see {@link GLMeshPool}): no GL objects are created here. */
+    protected GLMesh(String name, int vaoID, int vboID, int firstVertex, int vertexCount, List<VertexAttribute> vertexAttributes) {
+        super(-1, name);
+        this.vaoID = vaoID;
+        this.vboID = vboID;
+        this.firstVertex = firstVertex;
+        this.vertexCount = vertexCount;
+        this.vertexAttributes = vertexAttributes;
+        this.vertecies = null;
+    }
+
     @Override
     public void dispose() {
         GL30.glDeleteBuffers(this.vboID);
@@ -67,18 +112,24 @@ public class GLMesh extends GLResource implements IBindable, Mesh {
         GL30.glBindVertexArray(0);
     }
 
+    /** Frees the CPU copy of the vertex data once it is on the GPU (the mesh can then no longer be copied). */
+    public void dropCpuData() {
+        this.vertecies = null;
+    }
+
     @Override
     public IResource makeCopy(String name) {
+        if (vertecies == null) throw new IllegalStateException("CPU vertex data was dropped; cannot copy " + this.name);
         return new GLMesh(this.vertecies, this.vertexAttributes, name);
     }
 
     public void draw(){
-        GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, this.vertexCount);
+        GL30.glDrawArrays(GL30.GL_TRIANGLES, this.firstVertex, this.vertexCount);
     }
 
     public void drawInstanced(int count) {
         if (instanceVboID == 0) throw new IllegalStateException("Instancing not enabled for mesh: " + name);
-        GL33.glDrawArraysInstanced(GL30.GL_TRIANGLES, 0, this.vertexCount, count);
+        GL33.glDrawArraysInstanced(GL30.GL_TRIANGLES, this.firstVertex, this.vertexCount, count);
     }
 
     public void enableMatrixInstancing(int baseLocation, int initialCapacity) {

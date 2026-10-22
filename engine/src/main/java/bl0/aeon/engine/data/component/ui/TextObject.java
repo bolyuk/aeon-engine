@@ -13,6 +13,7 @@ import bl0.bjs.common.core.relations.ObservableObject;
 import bl0.bjs.common.core.relations.v2.Property;
 import bl0.bjs.common.core.relations.v2.xtra.BooleanProperty;
 import bl0.bjs.common.core.relations.v2.xtra.StringProperty;
+import org.joml.Vector4f;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 
@@ -30,10 +31,12 @@ public class TextObject extends BaseUIElement implements UITextElement {
         textMesh = eCtx.getResourceFabric().createUITextMesh(name+"_text");
 
         textMaterial.setShaderProgram(eCtx.getResourceManager().getResource(ShaderPrograms.TEXT_SOLID));
-        textMaterial.setColor(Colors.WHITE);
+        textMaterial.setColor(new Vector4f(Colors.WHITE));
 
         textHoverMaterial.setShaderProgram(eCtx.getResourceManager().getResource(ShaderPrograms.TEXT_SOLID));
-        textHoverMaterial.setColor(Colors.WHITE.div(0.5f));
+        // copy first: JOML's div() mutates in place, and Colors.WHITE is a shared constant (this used to
+        // double it for every TextObject ever created, blowing every default material color out to >>1)
+        textHoverMaterial.setColor(new Vector4f(Colors.WHITE).div(0.5f));
 
         text.addListener(x -> recalculateTextSize());
         font.addListener(x -> recalculateTextSize());
@@ -48,10 +51,8 @@ public class TextObject extends BaseUIElement implements UITextElement {
     private void recalculateTextSize() {
         Vector2f calculated = font.get().calculateSize(text.get()).add(padding.get().x+padding.get().z,padding.get().y+padding.get().w);
 
-        // запоминаем чистый размер текста
         baseSize.set(calculated);
 
-        // если есть поворот — сразу считаем AABB, иначе ставим как есть
         Quaternionf q = rotation.get();
         if (q != null && (q.z != 0f || q.x != 0f || q.y != 0f)) {
             recalculateSizeForRotation();

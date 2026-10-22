@@ -74,6 +74,15 @@ public class GLShaderProgram extends GLResource implements IBindable, ShaderProg
         GL30.glUniform4f(this.getUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 
+    /** Location of the per-draw model matrix, looked up once: set on every draw, thousands of times a frame. */
+    private int modelLocation = Integer.MIN_VALUE;
+
+    public void setModelMatrix(Matrix4f value) {
+        if (modelLocation == Integer.MIN_VALUE) modelLocation = getUniformLocation(bl0.aeon.gl.c.Uniforms.MODEL);
+        this.matrixBuffer.clear();
+        GL30.glUniformMatrix4fv(modelLocation, false, value.get(this.matrixBuffer));
+    }
+
     public void setUniform(String name, Matrix4f value) {
         name = this.replacePlaceHolders(name);
         this.matrixBuffer.clear();

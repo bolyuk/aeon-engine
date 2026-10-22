@@ -7,6 +7,7 @@ import bl0.aeon.render.api.resource.Framebuffer;
 import bl0.aeon.render.api.resource.Mesh;
 import bl0.aeon.render.api.resource.ShaderProgram;
 import bl0.aeon.render.api.resource.Texture;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
 public class GLFramebuffer extends GLResource implements IBindable, Framebuffer {
@@ -14,6 +15,7 @@ public class GLFramebuffer extends GLResource implements IBindable, Framebuffer 
     private Texture texture;
     private Mesh mesh;
     private ShaderProgram shader;
+    private int depthRenderbufferId = 0;
 
     public GLFramebuffer(String name) {
         super(GL30.glGenFramebuffers(), name);
@@ -32,6 +34,7 @@ public class GLFramebuffer extends GLResource implements IBindable, Framebuffer 
     @Override
     public void dispose() {
         GL30.glDeleteFramebuffers(ID);
+        if (depthRenderbufferId != 0) GL30.glDeleteRenderbuffers(depthRenderbufferId);
     }
 
     @Override
@@ -55,6 +58,15 @@ public class GLFramebuffer extends GLResource implements IBindable, Framebuffer 
         bind();
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D,
                 gltexture.ID, 0);
+
+        // a custom framebuffer has no depth buffer unless one is attached explicitly;
+        // without it GL_DEPTH_TEST is a no-op and overlapping geometry draws in whatever
+        // order it was submitted instead of being occluded correctly.
+        if (depthRenderbufferId == 0) depthRenderbufferId = GL30.glGenRenderbuffers();
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, depthRenderbufferId);
+        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT24, gltexture.width, gltexture.height);
+        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, depthRenderbufferId);
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
 
         int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE) {

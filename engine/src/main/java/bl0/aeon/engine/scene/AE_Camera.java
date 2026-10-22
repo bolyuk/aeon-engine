@@ -19,20 +19,33 @@ public class AE_Camera implements Camera {
     }, this.position, this.direction, this.up);
 
     public final ObservableObject<Float> fov = new ObservableObject<>(60.0f);
+    /** Near and far clipping planes. Everything farther than {@code far} is cut off by the projection, so a game that draws
+     *  further than the default 1000 must raise it (a plane cutting through the scene, turning with the camera). */
+    public final ObservableObject<Float> near = new ObservableObject<>(0.1f);
+    public final ObservableObject<Float> far = new ObservableObject<>(1000.0f);
 
     public FactorizedObject<Matrix4f> projectionMatrix =
             new FactorizedObject<>(new Matrix4f(),
                     e -> new Matrix4f().perspective((float) Math.toRadians(this.fov.get()),
-                            this.aspectRatio.get(), 0.1f, 1000.0f),
-                    this.aspectRatio, this.fov);
+                            this.aspectRatio.get(), this.near.get(), this.far.get()),
+                    this.aspectRatio, this.fov, this.near, this.far);
+    private final Matrix4f view = new Matrix4f(), projection = new Matrix4f();
+
+    /**
+     * The view matrix of the current position, direction and up, worked out on every call. (The {@link #viewMatrix} factorized
+     * value missed updates - in about half the frames the scene was drawn with the previous frame's camera, which showed as
+     * whatever moves with the camera jumping back and forth by a frame's travel.)
+     */
     @Override
     public Matrix4f getViewMatrix() {
-        return viewMatrix.get();
+        Vector3f p = position.get(), d = direction.get(), u = up.get();
+        return view.setLookAt(p.x, p.y, p.z, p.x + d.x, p.y + d.y, p.z + d.z, u.x, u.y, u.z);
     }
 
+    /** The projection of the current fov, aspect ratio and clip planes, worked out on every call (see {@link #getViewMatrix}). */
     @Override
     public Matrix4f getProjectionMatrix() {
-        return projectionMatrix.get();
+        return projection.setPerspective((float) Math.toRadians(fov.get()), aspectRatio.get(), near.get(), far.get());
     }
 
     @Override
