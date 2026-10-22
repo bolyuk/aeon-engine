@@ -41,12 +41,14 @@ import bl0.aeon.render.api.c.resources.ShaderPrograms;
 import bl0.aeon.render.api.c.resources.Textures;
 import bl0.aeon.render.api.backend.IResourceFabric;
 import bl0.aeon.api.core.IResourceManager;
+import bl0.aeon.render.api.data.render.IRenderableSource;
 import bl0.aeon.render.api.data.render.RenderFrame;
 import bl0.aeon.render.api.data.input.InputData;
 import bl0.aeon.render.api.data.input.Key;
 import bl0.aeon.render.api.data.light.DirectionalLight;
 import bl0.aeon.render.api.data.light.PointLight;
 import bl0.aeon.render.api.data.render.IRenderable;
+import bl0.aeon.render.api.data.render.scene.IBoundedRenderable;
 import bl0.aeon.render.api.resource.Framebuffer;
 import bl0.aeon.render.api.resource.ShaderProgram;
 import bl0.aeon.render.api.resource.Texture;
@@ -77,7 +79,7 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
 
     private ArrayList<Extension> extensions = new ArrayList<>();
 
-    private int fpsLimit = 400;
+    private int fpsLimit = 999;
 
     private long sysKeyDelay = 300;
     private HashMap<Key, Long> sysKeysDelayData = new HashMap<>();
@@ -324,10 +326,13 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         return false;
     }
 
+    private final ArrayList<IRenderable> prepared = new ArrayList<>();
+
     private void onRender() {
         List<SceneObject> sceneObjects = scene.getSceneObjects();
 
-        ArrayList<IRenderable> prepared = new ArrayList<>(sceneObjects.size());
+        ArrayList<IRenderable> prepared = this.prepared;      // reused: rebuilt every frame, thousands of entries
+        prepared.clear();
         DirectionalLight directionalLight = null;
         ArrayList<PointLight> pointLights = new ArrayList<>();
 
@@ -344,9 +349,13 @@ public class AeonEngine extends BJSBaseClass implements IEngineContext {
         }
 
         for (SceneObject so : sceneObjects) {
+            if (so instanceof IRenderableSource src) {
+                src.collectRenderables(prepared);
+                continue;
+            }
 
-            // self renderable
             if (so instanceof IRenderable r) {
+                if (r instanceof IBoundedRenderable b && b.isCulled()) continue;
                 prepared.add(r);
                 continue;
             }
