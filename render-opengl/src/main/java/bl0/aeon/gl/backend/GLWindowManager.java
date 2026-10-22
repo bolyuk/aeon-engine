@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class GLWindowManager extends GLBaseClass implements IWindowManager {
     private final ActionController<Pair<Integer, Integer>> windowSizeChangedController = new ActionController<>();
 
-    private final HashMap<Integer, Key> keyMapping = InputUtils.getDefaultKeyMapping();
+    private final HashMap<Integer, java.util.List<Key>> keyMapping = InputUtils.getDefaultKeyMapping();
 
     private final HashMap<Integer, Key> mouseMapping = InputUtils.getDefaultMouseMapping();
     private Window window;
@@ -35,7 +35,7 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
         super(state, ctx);
     }
 
-    private final boolean[] mouseDown = new boolean[2];
+    private final boolean[] mouseDown = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
     private final Vector2d mPos = new Vector2d();
     private final Vector2d mdt = new Vector2d();
     private boolean mouseInitialized = false;
@@ -119,7 +119,7 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
                 return;
             }
 
-            mdt.set(x - mPos.x, y - mPos.y);
+            mdt.add(x - mPos.x, y - mPos.y);
             mPos.set(x, y);
         });
 
@@ -145,16 +145,18 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
 
         for(var pair : keyMapping.entrySet()) {
             if(GLFW.glfwGetKey(window.ID, pair.getKey()) == GLFW.GLFW_PRESS)
-                input.keys.add(pair.getValue());
+                input.keys.addAll(pair.getValue());
         }
 
         for(int i=0; i<mouseDown.length; i++) {
-            if(mouseDown[i])
-                input.keys.add(mouseMapping.get(i));
+            Key k = mouseDown[i] ? mouseMapping.get(i) : null;
+            if(k != null)
+                input.keys.add(k);
         }
 
-        input.mdt = mdt;
-        input.mPos = mPos;
+        input.mdt = new Vector2d(mdt);
+        input.mPos = new Vector2d(mPos);
+        mdt.set(0, 0);
         return input;
     }
 
@@ -165,7 +167,7 @@ public class GLWindowManager extends GLBaseClass implements IWindowManager {
 
     @Override
     public void captureCursor(boolean flag) {
-        GLFW.glfwSetInputMode(window.ID, GLFW.GLFW_CURSOR, flag ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR);
+        GLFW.glfwSetInputMode(window.ID, GLFW.GLFW_CURSOR, flag ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
     }
 
     @Override
