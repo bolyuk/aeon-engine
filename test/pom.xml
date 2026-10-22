@@ -18,18 +18,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>bl0.bjs.framework</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>bl0.bjs.framework</groupId>
-            <artifactId>boot</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>bl0.aeon</groupId>
             <artifactId>engine</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -45,6 +33,18 @@
             <groupId>bl0.aeon</groupId>
             <artifactId>aeon-framework</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>bl0.bjs.framework</groupId>
+            <artifactId>common</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>bl0.bjs.framework</groupId>
+            <artifactId>boot</artifactId>
+            <version>2.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
