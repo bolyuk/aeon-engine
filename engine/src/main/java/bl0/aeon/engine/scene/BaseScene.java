@@ -13,6 +13,7 @@ import bl0.aeon.api.scene.properties.Vector2fProperty;
 import bl0.aeon.api.scene.properties.Vector4fProperty;
 import bl0.aeon.api.stage.Stage;
 import bl0.aeon.render.api.data.render.Camera;
+import bl0.bjs.logging.ILogger;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -26,6 +27,7 @@ public class BaseScene implements Scene, UIContainer {
     protected Camera camera = new AE_Camera();
 
     protected IEngineContext eCtx;
+    protected ILogger l;
 
     @Override
     public void onUpdate(IEngineContext ctx) {
@@ -33,19 +35,21 @@ public class BaseScene implements Scene, UIContainer {
             try {
                 object.update(ctx.getFrameContext(), ctx);
             } catch(Exception e) {
-                throw new RuntimeException(e);
+                l.err(e);
             }
         }
     }
 
     public void onShowed(IEngineContext ctx) {
         this.eCtx = ctx;
+        this.l = ctx.getDefaultLogger().genSubLogger(this.getClass());
         camera.setAspectRatio(ctx.getFrameContext().sizeProperty().getAspectRatio());
         sizeProperty.bind(ctx.getFrameContext().sizeProperty());;
     }
 
     public void onHided(IEngineContext ctx) {
         this.eCtx = null;
+        this.l = null;
         sizeProperty.unbind(ctx.getFrameContext().sizeProperty());;
     }
 
