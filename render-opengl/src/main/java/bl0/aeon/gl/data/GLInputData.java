@@ -4,10 +4,10 @@ import bl0.aeon.render.api.data.input.InputData;
 import bl0.aeon.render.api.data.input.Key;
 import org.joml.Vector2d;
 
-import java.util.ArrayList;
+import java.util.EnumSet;
 
 public class GLInputData implements InputData {
-    public ArrayList<Key> keys = new  ArrayList<>();
+    public final EnumSet<Key> keys = EnumSet.noneOf(Key.class);
 
     public Vector2d mPos, mdt;
 
