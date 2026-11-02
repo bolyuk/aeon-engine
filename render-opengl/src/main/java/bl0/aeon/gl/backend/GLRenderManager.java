@@ -229,6 +229,9 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
 
         if(!obj.isDepthTestEnabled())
             GL30.glDisable(GL30.GL_DEPTH_TEST);
+        boolean noDepthWrite = !obj.isDepthWriteEnabled();   // translucent surfaces: tested against depth, never hide what is drawn after
+        if(noDepthWrite)
+            GL11.glDepthMask(false);
 
         if(obj instanceof ISingleRenderable isr) {
             TransformUniforms.setUniforms(isr, program);
@@ -244,6 +247,8 @@ public class GLRenderManager extends GLBaseClass implements IRenderManager {
 
         if(!obj.isDepthTestEnabled())
             GL30.glEnable(GL30.GL_DEPTH_TEST);
+        if(noDepthWrite)
+            GL11.glDepthMask(true);
     }
 
     private static final String DUMP_PATH = System.getProperty("aeon.dump");
