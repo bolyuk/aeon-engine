@@ -18,6 +18,8 @@
         <module>aeon-framework</module>
         <module>aeon-physic</module>
         <module>extension-api</module>
+        <module>audio-api</module>
+        <module>audio-openal</module>
     </modules>
 
     <properties>

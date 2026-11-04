@@ -205,6 +205,35 @@ This system is intentionally simple (not yet) and designed for future batching a
 
 ---
 
+## Звук
+
+Устроен так же, как графика: `audio-api` — интерфейсы без библиотек, `audio-openal` — реализация на OpenAL (LWJGL). Движок сам звук не трогает: менеджер открывает игра и держит у себя.
+
+```java
+IAudioManager audio = ALBackend.open();                    // не падает: без устройства вернётся NullAudioManager
+ISound step = audio.loadSound("step", "sounds/step.wav");  // из ресурсов, WAV или OGG
+
+audio.setListener(x, y, z, atX, atY, atZ, upX, upY, upZ);  // каждый кадр
+audio.update();                                            // каждый кадр: вернуть источники закончившихся звуков
+audio.setMasterVolume(0.8f);
+
+audio.play(step, SoundParams.at(10, 64, 3).volume(0.7f).pitch(0.9f).reach(4, 60));
+IVoice hum = audio.play(step, SoundParams.local().looping(true));   // с игроком, без расстояния
+hum.setVolume(0.2f);
+hum.stop();
+
+audio.dispose();
+```
+
+* Громкость падает по прямой: полная до `refDistance`, тишина с `maxDistance`.
+* В пространстве размещается только **моно**; стерео играет как есть.
+* Источников постоянный запас (до 48). Когда все заняты, уступает самый старый не зацикленный звук; `IVoice` закончившегося или вытесненного звука безопасен и ничего не делает.
+* Вызовы из одного потока. Контекст OpenAL один на процесс, поэтому менеджер одновременно может быть открыт один. Незакрытый закроется при выходе из процесса.
+* `-Daeon.noAudio=true` — как будто устройства нет, `-Daeon.audioLog=true` — строка на каждый запущенный звук.
+* `ALLoopback` — тот же менеджер без колонок: `render(seconds)` отдаёт сэмплы, по ним звук проверяется без ушей и без звуковой карты. `test/.../TEST_AUDIO` так и делает; код выхода — число провалов.
+
+---
+
 ## Design Goals
 
 The architecture prioritizes:
